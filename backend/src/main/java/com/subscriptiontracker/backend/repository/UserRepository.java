@@ -1,7 +1,8 @@
-package com.substractiontracker.backend.repository;
+package com.subscriptiontracker.backend.repository;
 
-import com.substractiontracker.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.subscriptiontracker.backend.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 

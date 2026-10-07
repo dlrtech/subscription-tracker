@@ -1,10 +1,16 @@
-package com.substractiontracker.backend.service;
+package com.subscriptiontracker.backend.service;
 
-import com.substractiontracker.backend.entity.Subscription;
-import com.substractiontracker.backend.repository.SubscriptionRepository;
 import org.springframework.stereotype.Service;
 
+import com.subscriptiontracker.backend.entity.Subscription;
+import com.subscriptiontracker.backend.enums.BillingPeriod;
+import com.subscriptiontracker.backend.repository.SubscriptionRepository;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service
 public class SubscriptionService {
@@ -66,5 +72,57 @@ public class SubscriptionService {
     existingSubscription.setActive(updatedSubscription.isActive());
 
     return subscriptionRepository.save(existingSubscription);
+}
+public BigDecimal calculateMonthlyTotal() {
+
+    List<Subscription> subscriptions = subscriptionRepository.findAll();
+
+    BigDecimal total = BigDecimal.ZERO;
+
+    for (Subscription subscription : subscriptions) {
+
+        if (!subscription.isActive()) {
+            continue;
+        }
+
+        if (subscription.getBillingPeriod() == BillingPeriod.MONTHLY) {
+            total = total.add(subscription.getPrice());
+        }
+
+        if (subscription.getBillingPeriod() == BillingPeriod.YEARLY) {
+            BigDecimal monthlyPrice =
+                    subscription.getPrice().divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);
+
+            total = total.add(monthlyPrice);
+        }
+    }
+
+    return total;
+}
+public BigDecimal calculateYearlyTotal() {
+
+    List<Subscription> subscriptions = subscriptionRepository.findAll();
+
+    BigDecimal total = BigDecimal.ZERO;
+
+    for (Subscription subscription : subscriptions) {
+
+        if (!subscription.isActive()) {
+            continue;
+        }
+
+        if (subscription.getBillingPeriod() == BillingPeriod.MONTHLY) {
+            BigDecimal yearlyPrice =
+                    subscription.getPrice().multiply(BigDecimal.valueOf(12));
+
+            total = total.add(yearlyPrice);
+        }
+
+        if (subscription.getBillingPeriod() == BillingPeriod.YEARLY) {
+            total = total.add(subscription.getPrice());
+        }
+    }
+
+    return total;
 }
 }
