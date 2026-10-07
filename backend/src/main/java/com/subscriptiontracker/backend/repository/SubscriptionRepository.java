@@ -1,7 +1,8 @@
-package com.substractiontracker.backend.repository;
+package com.subscriptiontracker.backend.repository;
 
-import com.substractiontracker.backend.entity.Subscription;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.subscriptiontracker.backend.entity.Subscription;
 
 
 public interface SubscriptionRepository
