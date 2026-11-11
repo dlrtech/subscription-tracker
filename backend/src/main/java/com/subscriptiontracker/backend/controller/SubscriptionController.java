@@ -1,4 +1,4 @@
-package com.subscriptiontracker.controller;
+package com.subscriptiontracker.backend.controller;
 
 import org.springframework.web.bind.annotation.*;
 
