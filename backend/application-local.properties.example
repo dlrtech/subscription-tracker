@@ -1,0 +1,6 @@
+# Copy to application-local.properties (in the backend folder, next to pom.xml) for local development.
+# That file is git-ignored; never commit real passwords or secrets.
+spring.datasource.url=jdbc:postgresql://localhost:5432/subscription_tracker
+spring.datasource.username=postgres
+spring.datasource.password=change-me
+app.jwt.secret=replace-with-a-random-string-of-at-least-32-characters

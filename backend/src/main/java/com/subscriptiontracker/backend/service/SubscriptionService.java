@@ -1,115 +1,143 @@
 package com.subscriptiontracker.backend.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.subscriptiontracker.backend.dto.SpendingSummaryResponse;
 import com.subscriptiontracker.backend.dto.SubscriptionRequest;
 import com.subscriptiontracker.backend.entity.Subscription;
-import com.subscriptiontracker.backend.entity.User;
-import com.subscriptiontracker.backend.enums.BillingPeriod;
+import com.subscriptiontracker.backend.enums.Category;
 import com.subscriptiontracker.backend.exception.ResourceNotFoundException;
 import com.subscriptiontracker.backend.repository.SubscriptionRepository;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Service
 public class SubscriptionService {
 
-    private static final BigDecimal WEEKS_PER_YEAR = BigDecimal.valueOf(52);
-    private static final BigDecimal MONTHS_PER_YEAR = BigDecimal.valueOf(12);
+    private static final Logger log = LoggerFactory.getLogger(SubscriptionService.class);
 
     private final SubscriptionRepository subscriptionRepository;
     private final UserService userService;
+    private final Clock clock;
+    private final String defaultCurrency;
 
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, UserService userService) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository,
+                               UserService userService,
+                               Clock clock,
+                               @Value("${app.default-currency:TRY}") String defaultCurrency) {
         this.subscriptionRepository = subscriptionRepository;
         this.userService = userService;
+        this.clock = clock;
+        this.defaultCurrency = defaultCurrency.toUpperCase(Locale.ROOT);
     }
 
     @Transactional
-    public Subscription createSubscription(Long userId, SubscriptionRequest request) {
-        User user = userService.getUserById(userId);
-
+    public Subscription create(Long userId, SubscriptionRequest request) {
         Subscription subscription = new Subscription();
-        subscription.setUser(user);
+        subscription.setUser(userService.getUserById(userId));
+        subscription.setBillingAnchorDate(request.nextBillingDate());
         apply(subscription, request);
-
         return subscriptionRepository.save(subscription);
     }
 
     @Transactional(readOnly = true)
-    public List<Subscription> getSubscriptionsForUser(Long userId) {
-        ensureUserExists(userId);
-        return subscriptionRepository.findByUserId(userId);
+    public List<Subscription> list(Long userId, Boolean active) {
+        return active == null
+                ? subscriptionRepository.findByUserIdOrderByNextBillingDateAscIdAsc(userId)
+                : subscriptionRepository.findByUserIdAndActiveOrderByNextBillingDateAscIdAsc(userId, active);
     }
 
     @Transactional(readOnly = true)
-    public Subscription getSubscriptionById(Long id) {
-        return subscriptionRepository.findById(id)
+    public Subscription get(Long userId, Long id) {
+        // Another user's subscription is reported as missing so ids cannot be probed.
+        return subscriptionRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Subscription not found"));
     }
 
     @Transactional
-    public Subscription updateSubscription(Long id, SubscriptionRequest request) {
-        Subscription subscription = getSubscriptionById(id);
+    public Subscription update(Long userId, Long id, SubscriptionRequest request) {
+        Subscription subscription = get(userId, id);
+        // Keep the original anchor unless the user picked a different billing date or cycle.
+        if (!request.nextBillingDate().equals(subscription.getNextBillingDate())
+                || request.billingPeriod() != subscription.getBillingPeriod()) {
+            subscription.setBillingAnchorDate(request.nextBillingDate());
+        }
         apply(subscription, request);
-        return subscriptionRepository.save(subscription);
+        return subscription;
     }
 
     @Transactional
-    public void deleteSubscription(Long id) {
-        if (!subscriptionRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Subscription not found");
+    public void delete(Long userId, Long id) {
+        subscriptionRepository.delete(get(userId, id));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Subscription> upcoming(Long userId, int days) {
+        LocalDate today = LocalDate.now(clock);
+        return subscriptionRepository
+                .findByUserIdAndActiveTrueAndNextBillingDateBetweenOrderByNextBillingDateAscIdAsc(
+                        userId, today, today.plusDays(days));
+    }
+
+    @Transactional(readOnly = true)
+    public List<SpendingSummaryResponse> summary(Long userId) {
+        Map<String, List<Subscription>> byCurrency = subscriptionRepository.findByUserIdAndActiveTrue(userId).stream()
+                .collect(Collectors.groupingBy(Subscription::getCurrency, TreeMap::new, Collectors.toList()));
+
+        return byCurrency.entrySet().stream()
+                .map(entry -> summarize(entry.getKey(), entry.getValue()))
+                .toList();
+    }
+
+    /** Moves every passed billing date to its next occurrence. Returns the number of updated rows. */
+    @Transactional
+    public int advanceBillingDates() {
+        LocalDate today = LocalDate.now(clock);
+        List<Subscription> overdue = subscriptionRepository.findByNextBillingDateBefore(today);
+        overdue.forEach(s -> s.setNextBillingDate(
+                BillingCalculator.nextBillingDate(s.getBillingAnchorDate(), s.getBillingPeriod(), today)));
+        if (!overdue.isEmpty()) {
+            log.info("Advanced next billing date of {} subscription(s)", overdue.size());
         }
-        subscriptionRepository.deleteById(id);
+        return overdue.size();
     }
 
-    @Transactional(readOnly = true)
-    public BigDecimal calculateMonthlyTotal(Long userId) {
-        ensureUserExists(userId);
-        return subscriptionRepository.findByUserIdAndActiveTrue(userId).stream()
-                .map(this::toMonthly)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
-    }
+    private SpendingSummaryResponse summarize(String currency, List<Subscription> subscriptions) {
+        BigDecimal monthly = BigDecimal.ZERO.setScale(2);
+        BigDecimal yearly = BigDecimal.ZERO.setScale(2);
+        Map<Category, BigDecimal> byCategory = new EnumMap<>(Category.class);
 
-    @Transactional(readOnly = true)
-    public BigDecimal calculateYearlyTotal(Long userId) {
-        ensureUserExists(userId);
-        return subscriptionRepository.findByUserIdAndActiveTrue(userId).stream()
-                .map(this::toYearly)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
+        for (Subscription s : subscriptions) {
+            BigDecimal monthlyCost = BillingCalculator.monthlyCost(s.getPrice(), s.getBillingPeriod());
+            monthly = monthly.add(monthlyCost);
+            yearly = yearly.add(BillingCalculator.yearlyCost(s.getPrice(), s.getBillingPeriod()));
+            byCategory.merge(s.getCategory(), monthlyCost, BigDecimal::add);
+        }
+        return new SpendingSummaryResponse(currency, subscriptions.size(), monthly, yearly, byCategory);
     }
 
     private void apply(Subscription subscription, SubscriptionRequest request) {
         subscription.setName(request.name().trim());
         subscription.setPrice(request.price());
+        subscription.setCurrency(request.currency() == null
+                ? defaultCurrency
+                : request.currency().toUpperCase(Locale.ROOT));
         subscription.setBillingPeriod(request.billingPeriod());
-        subscription.setNextBillingDate(request.nextBillingDate());
-        subscription.setCategory(request.category());
-        subscription.setActive(request.isActiveOrDefault());
-    }
-
-    private void ensureUserExists(Long userId) {
-        userService.getUserById(userId);
-    }
-
-    private BigDecimal toYearly(Subscription subscription) {
-        BigDecimal price = subscription.getPrice();
-        return switch (subscription.getBillingPeriod()) {
-            case WEEKLY -> price.multiply(WEEKS_PER_YEAR);
-            case MONTHLY -> price.multiply(MONTHS_PER_YEAR);
-            case YEARLY -> price;
-        };
-    }
-
-    private BigDecimal toMonthly(Subscription subscription) {
-        if (subscription.getBillingPeriod() == BillingPeriod.MONTHLY) {
-            return subscription.getPrice();
-        }
-        return toYearly(subscription).divide(MONTHS_PER_YEAR, 2, RoundingMode.HALF_UP);
+        subscription.setCategory(request.category() == null ? Category.OTHER : request.category());
+        subscription.setActive(request.active() == null || request.active());
+        subscription.setNextBillingDate(BillingCalculator.nextBillingDate(
+                subscription.getBillingAnchorDate(), request.billingPeriod(), LocalDate.now(clock)));
     }
 }

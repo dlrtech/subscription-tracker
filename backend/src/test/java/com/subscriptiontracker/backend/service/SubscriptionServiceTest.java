@@ -1,5 +1,6 @@
 package com.subscriptiontracker.backend.service;
 
+import com.subscriptiontracker.backend.dto.SpendingSummaryResponse;
 import com.subscriptiontracker.backend.dto.SubscriptionRequest;
 import com.subscriptiontracker.backend.entity.Subscription;
 import com.subscriptiontracker.backend.entity.User;
@@ -7,28 +8,29 @@ import com.subscriptiontracker.backend.enums.BillingPeriod;
 import com.subscriptiontracker.backend.enums.Category;
 import com.subscriptiontracker.backend.exception.ResourceNotFoundException;
 import com.subscriptiontracker.backend.repository.SubscriptionRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SubscriptionServiceTest {
 
     private static final Long USER_ID = 1L;
+    private static final LocalDate TODAY = LocalDate.of(2026, 11, 11);
 
     @Mock
     private SubscriptionRepository subscriptionRepository;
@@ -36,120 +38,124 @@ class SubscriptionServiceTest {
     @Mock
     private UserService userService;
 
-    @InjectMocks
-    private SubscriptionService subscriptionService;
+    private SubscriptionService service;
 
-    private static Subscription subscription(String price, BillingPeriod period) {
+    @BeforeEach
+    void setUp() {
+        Clock clock = Clock.fixed(TODAY.atStartOfDay().toInstant(ZoneOffset.UTC), ZoneOffset.UTC);
+        service = new SubscriptionService(subscriptionRepository, userService, clock, "try");
+    }
+
+    private static SubscriptionRequest request(String price, BillingPeriod period, LocalDate next) {
+        return new SubscriptionRequest(" Netflix ", new BigDecimal(price), null, period, next, null, null);
+    }
+
+    private static Subscription subscription(String price, String currency, BillingPeriod period, Category category) {
         Subscription s = new Subscription();
         s.setName("Test");
         s.setPrice(new BigDecimal(price));
+        s.setCurrency(currency);
         s.setBillingPeriod(period);
+        s.setCategory(category);
         s.setActive(true);
         return s;
     }
 
     @Test
-    void monthlyTotal_convertsEveryBillingPeriod() {
-        when(subscriptionRepository.findByUserIdAndActiveTrue(USER_ID)).thenReturn(List.of(
-                subscription("100", BillingPeriod.MONTHLY),
-                subscription("120", BillingPeriod.YEARLY),
-                subscription("10", BillingPeriod.WEEKLY)));
-
-        // 100 + 120/12 + 10*52/12 = 100 + 10.00 + 43.33
-        assertThat(subscriptionService.calculateMonthlyTotal(USER_ID)).isEqualByComparingTo("153.33");
-    }
-
-    @Test
-    void yearlyTotal_convertsEveryBillingPeriod() {
-        when(subscriptionRepository.findByUserIdAndActiveTrue(USER_ID)).thenReturn(List.of(
-                subscription("100", BillingPeriod.MONTHLY),
-                subscription("120", BillingPeriod.YEARLY),
-                subscription("10", BillingPeriod.WEEKLY)));
-
-        // 1200 + 120 + 520
-        assertThat(subscriptionService.calculateYearlyTotal(USER_ID)).isEqualByComparingTo("1840");
-    }
-
-    @Test
-    void totals_areZeroWhenNoActiveSubscriptions() {
-        when(subscriptionRepository.findByUserIdAndActiveTrue(USER_ID)).thenReturn(List.of());
-
-        assertThat(subscriptionService.calculateMonthlyTotal(USER_ID)).isEqualByComparingTo("0");
-        assertThat(subscriptionService.calculateYearlyTotal(USER_ID)).isEqualByComparingTo("0");
-    }
-
-    @Test
-    void totals_failForUnknownUser() {
-        when(userService.getUserById(99L)).thenThrow(new ResourceNotFoundException("User not found"));
-
-        assertThatThrownBy(() -> subscriptionService.calculateMonthlyTotal(99L))
-                .isInstanceOf(ResourceNotFoundException.class);
-    }
-
-    @Test
-    void create_assignsUserAndDefaultsToActive() {
+    void create_appliesDefaultsAndMovesPastDateForward() {
         User user = new User();
         when(userService.getUserById(USER_ID)).thenReturn(user);
         when(subscriptionRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        SubscriptionRequest request = new SubscriptionRequest(
-                "  Netflix ", new BigDecimal("15.99"), BillingPeriod.MONTHLY,
-                LocalDate.of(2026, 12, 1), Category.ENTERTAINMENT, null);
-
-        Subscription saved = subscriptionService.createSubscription(USER_ID, request);
+        Subscription saved = service.create(USER_ID, request("15.99", BillingPeriod.MONTHLY, LocalDate.of(2026, 10, 20)));
 
         assertThat(saved.getUser()).isSameAs(user);
         assertThat(saved.getName()).isEqualTo("Netflix");
+        assertThat(saved.getCurrency()).isEqualTo("TRY");
+        assertThat(saved.getCategory()).isEqualTo(Category.OTHER);
         assertThat(saved.isActive()).isTrue();
-        assertThat(saved.getCategory()).isEqualTo(Category.ENTERTAINMENT);
+        assertThat(saved.getBillingAnchorDate()).isEqualTo(LocalDate.of(2026, 10, 20));
+        assertThat(saved.getNextBillingDate()).isEqualTo(LocalDate.of(2026, 11, 20));
     }
 
     @Test
-    void create_failsForUnknownUser() {
-        when(userService.getUserById(99L)).thenThrow(new ResourceNotFoundException("User not found"));
+    void update_keepsAnchorWhenDateIsUnchanged() {
+        Subscription existing = subscription("10", "TRY", BillingPeriod.MONTHLY, Category.OTHER);
+        existing.setBillingAnchorDate(LocalDate.of(2026, 1, 31));
+        existing.setNextBillingDate(LocalDate.of(2026, 11, 30));
+        when(subscriptionRepository.findByIdAndUserId(5L, USER_ID)).thenReturn(Optional.of(existing));
 
-        SubscriptionRequest request = new SubscriptionRequest(
-                "Netflix", BigDecimal.TEN, BillingPeriod.MONTHLY, null, null, null);
+        service.update(USER_ID, 5L, new SubscriptionRequest(
+                "Netflix", new BigDecimal("12"), "usd", BillingPeriod.MONTHLY,
+                LocalDate.of(2026, 11, 30), Category.ENTERTAINMENT, false));
 
-        assertThatThrownBy(() -> subscriptionService.createSubscription(99L, request))
-                .isInstanceOf(ResourceNotFoundException.class);
-        verify(subscriptionRepository, never()).save(any());
+        assertThat(existing.getBillingAnchorDate()).isEqualTo(LocalDate.of(2026, 1, 31));
+        assertThat(existing.getCurrency()).isEqualTo("USD");
+        assertThat(existing.isActive()).isFalse();
+        assertThat(existing.getPrice()).isEqualByComparingTo("12");
     }
 
     @Test
-    void update_copiesAllFields() {
-        Subscription existing = subscription("10", BillingPeriod.MONTHLY);
-        when(subscriptionRepository.findById(5L)).thenReturn(Optional.of(existing));
-        when(subscriptionRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+    void update_resetsAnchorWhenDateChanges() {
+        Subscription existing = subscription("10", "TRY", BillingPeriod.MONTHLY, Category.OTHER);
+        existing.setBillingAnchorDate(LocalDate.of(2026, 1, 31));
+        existing.setNextBillingDate(LocalDate.of(2026, 11, 30));
+        when(subscriptionRepository.findByIdAndUserId(5L, USER_ID)).thenReturn(Optional.of(existing));
 
-        SubscriptionRequest request = new SubscriptionRequest(
-                "Spotify", new BigDecimal("99"), BillingPeriod.YEARLY,
-                LocalDate.of(2027, 1, 1), Category.MUSIC, false);
+        service.update(USER_ID, 5L, request("10", BillingPeriod.MONTHLY, LocalDate.of(2026, 12, 15)));
 
-        Subscription updated = subscriptionService.updateSubscription(5L, request);
-
-        assertThat(updated.getName()).isEqualTo("Spotify");
-        assertThat(updated.getPrice()).isEqualByComparingTo("99");
-        assertThat(updated.getBillingPeriod()).isEqualTo(BillingPeriod.YEARLY);
-        assertThat(updated.getNextBillingDate()).isEqualTo(LocalDate.of(2027, 1, 1));
-        assertThat(updated.getCategory()).isEqualTo(Category.MUSIC);
-        assertThat(updated.isActive()).isFalse();
+        assertThat(existing.getBillingAnchorDate()).isEqualTo(LocalDate.of(2026, 12, 15));
+        assertThat(existing.getNextBillingDate()).isEqualTo(LocalDate.of(2026, 12, 15));
     }
 
     @Test
-    void getById_throwsNotFound() {
-        when(subscriptionRepository.findById(5L)).thenReturn(Optional.empty());
+    void get_otherUsersSubscriptionIsNotFound() {
+        when(subscriptionRepository.findByIdAndUserId(5L, USER_ID)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> subscriptionService.getSubscriptionById(5L))
-                .isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> service.get(USER_ID, 5L)).isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
-    void delete_throwsNotFound() {
-        when(subscriptionRepository.existsById(5L)).thenReturn(false);
+    void summary_groupsByCurrencyAndCategory() {
+        when(subscriptionRepository.findByUserIdAndActiveTrue(USER_ID)).thenReturn(List.of(
+                subscription("100", "TRY", BillingPeriod.MONTHLY, Category.ENTERTAINMENT),
+                subscription("120", "TRY", BillingPeriod.YEARLY, Category.ENTERTAINMENT),
+                subscription("10", "TRY", BillingPeriod.WEEKLY, Category.SOFTWARE),
+                subscription("5", "USD", BillingPeriod.MONTHLY, Category.CLOUD)));
 
-        assertThatThrownBy(() -> subscriptionService.deleteSubscription(5L))
-                .isInstanceOf(ResourceNotFoundException.class);
-        verify(subscriptionRepository, never()).deleteById(any());
+        List<SpendingSummaryResponse> summary = service.summary(USER_ID);
+
+        assertThat(summary).extracting(SpendingSummaryResponse::currency).containsExactly("TRY", "USD");
+
+        SpendingSummaryResponse tr = summary.get(0);
+        assertThat(tr.activeSubscriptions()).isEqualTo(3);
+        assertThat(tr.monthlyTotal()).isEqualByComparingTo("153.33");
+        assertThat(tr.yearlyTotal()).isEqualByComparingTo("1840.00");
+        assertThat(tr.monthlyByCategory().get(Category.ENTERTAINMENT)).isEqualByComparingTo("110.00");
+        assertThat(tr.monthlyByCategory().get(Category.SOFTWARE)).isEqualByComparingTo("43.33");
+
+        assertThat(summary.get(1).monthlyTotal()).isEqualByComparingTo("5.00");
+    }
+
+    @Test
+    void summary_isEmptyWithoutActiveSubscriptions() {
+        when(subscriptionRepository.findByUserIdAndActiveTrue(USER_ID)).thenReturn(List.of());
+
+        assertThat(service.summary(USER_ID)).isEmpty();
+    }
+
+    @Test
+    void advanceBillingDates_movesOverdueDatesFromAnchor() {
+        Subscription monthEnd = subscription("10", "TRY", BillingPeriod.MONTHLY, Category.OTHER);
+        monthEnd.setBillingAnchorDate(LocalDate.of(2026, 1, 31));
+        monthEnd.setNextBillingDate(LocalDate.of(2026, 10, 31));
+        Subscription weekly = subscription("10", "TRY", BillingPeriod.WEEKLY, Category.OTHER);
+        weekly.setBillingAnchorDate(LocalDate.of(2026, 11, 3));
+        weekly.setNextBillingDate(LocalDate.of(2026, 11, 3));
+        when(subscriptionRepository.findByNextBillingDateBefore(TODAY)).thenReturn(List.of(monthEnd, weekly));
+
+        assertThat(service.advanceBillingDates()).isEqualTo(2);
+        assertThat(monthEnd.getNextBillingDate()).isEqualTo(LocalDate.of(2026, 11, 30));
+        assertThat(weekly.getNextBillingDate()).isEqualTo(LocalDate.of(2026, 11, 17));
     }
 }

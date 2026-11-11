@@ -1,14 +1,19 @@
 package com.subscriptiontracker.backend.controller;
 
-import com.subscriptiontracker.backend.dto.UserRequest;
+import com.subscriptiontracker.backend.dto.ChangePasswordRequest;
+import com.subscriptiontracker.backend.dto.UpdateProfileRequest;
 import com.subscriptiontracker.backend.dto.UserResponse;
 import com.subscriptiontracker.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import static com.subscriptiontracker.backend.security.TokenService.userId;
+
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/users/me")
 public class UserController {
 
     private final UserService userService;
@@ -17,19 +22,27 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse createUser(@Valid @RequestBody UserRequest request) {
-        return UserResponse.from(userService.createUser(request));
+    @GetMapping
+    public UserResponse me(@AuthenticationPrincipal Jwt jwt) {
+        return UserResponse.from(userService.getUserById(userId(jwt)));
     }
 
-    @GetMapping("/{id}")
-    public UserResponse getUserById(@PathVariable Long id) {
-        return UserResponse.from(userService.getUserById(id));
+    @PutMapping
+    public UserResponse updateProfile(@AuthenticationPrincipal Jwt jwt,
+                                      @Valid @RequestBody UpdateProfileRequest request) {
+        return UserResponse.from(userService.updateProfile(userId(jwt), request));
     }
 
-    @PutMapping("/{id}/name")
-    public UserResponse updateUserName(@PathVariable Long id, @Valid @RequestBody UserRequest request) {
-        return UserResponse.from(userService.updateUserName(id, request));
+    @PutMapping("/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changePassword(@AuthenticationPrincipal Jwt jwt,
+                               @Valid @RequestBody ChangePasswordRequest request) {
+        userService.changePassword(userId(jwt), request);
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAccount(@AuthenticationPrincipal Jwt jwt) {
+        userService.deleteAccount(userId(jwt));
     }
 }

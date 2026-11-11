@@ -2,9 +2,11 @@ package com.subscriptiontracker.backend.dto;
 
 import com.subscriptiontracker.backend.entity.User;
 
-public record UserResponse(Long id, String name) {
+import java.time.Instant;
+
+public record UserResponse(Long id, String email, String name, Instant createdAt) {
 
     public static UserResponse from(User user) {
-        return new UserResponse(user.getId(), user.getName());
+        return new UserResponse(user.getId(), user.getEmail(), user.getName(), user.getCreatedAt());
     }
 }
