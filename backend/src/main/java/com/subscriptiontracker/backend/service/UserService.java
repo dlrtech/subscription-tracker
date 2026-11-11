@@ -1,10 +1,11 @@
 package com.subscriptiontracker.backend.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.subscriptiontracker.backend.exception.ResourceNotFoundException;
-
+import com.subscriptiontracker.backend.dto.UserRequest;
 import com.subscriptiontracker.backend.entity.User;
+import com.subscriptiontracker.backend.exception.ResourceNotFoundException;
 import com.subscriptiontracker.backend.repository.UserRepository;
 
 @Service
@@ -16,31 +17,23 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(User user) {
-
-        if (user.getName() == null || user.getName().isBlank()) {
-            throw new IllegalArgumentException("User name cannot be empty");
-        }
-
+    @Transactional
+    public User createUser(UserRequest request) {
+        User user = new User();
+        user.setName(request.name().trim());
         return userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public User updateUserName(Long id, String newName) {
-
-        if (newName == null || newName.isBlank()) {
-            throw new IllegalArgumentException("User name cannot be empty");
-        }
-
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        user.setName(newName);
-
+    @Transactional
+    public User updateUserName(Long id, UserRequest request) {
+        User user = getUserById(id);
+        user.setName(request.name().trim());
         return userRepository.save(user);
     }
 }
