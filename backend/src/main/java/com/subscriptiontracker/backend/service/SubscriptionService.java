@@ -2,6 +2,8 @@ package com.subscriptiontracker.backend.service;
 
 import org.springframework.stereotype.Service;
 
+import com.subscriptiontracker.backend.exception.ResourceNotFoundException;
+
 import com.subscriptiontracker.backend.entity.Subscription;
 import com.subscriptiontracker.backend.enums.BillingPeriod;
 import com.subscriptiontracker.backend.repository.SubscriptionRepository;
@@ -33,12 +35,12 @@ public class SubscriptionService {
 
     public Subscription getSubscriptionById(Long id) {
         return subscriptionRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Subscription not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Subscription not found"));
     }
 
     public void deleteSubscription(Long id) {
         if (!subscriptionRepository.existsById(id)) {
-            throw new IllegalArgumentException("Subscription not found");
+            throw new ResourceNotFoundException("Subscription not found");
         }
         subscriptionRepository.deleteById(id);
     }

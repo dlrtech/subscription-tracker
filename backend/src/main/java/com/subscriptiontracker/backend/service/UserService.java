@@ -2,6 +2,8 @@ package com.subscriptiontracker.backend.service;
 
 import org.springframework.stereotype.Service;
 
+import com.subscriptiontracker.backend.exception.ResourceNotFoundException;
+
 import com.subscriptiontracker.backend.entity.User;
 import com.subscriptiontracker.backend.repository.UserRepository;
 
@@ -25,7 +27,7 @@ public class UserService {
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     public User updateUserName(Long id, String newName) {
@@ -35,7 +37,7 @@ public class UserService {
         }
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         user.setName(newName);
 
