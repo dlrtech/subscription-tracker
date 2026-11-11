@@ -9,11 +9,12 @@ import com.subscriptiontracker.backend.repository.SubscriptionRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 @Service
 public class SubscriptionService {
+
+    private static final BigDecimal WEEKS_PER_YEAR = BigDecimal.valueOf(52);
+    private static final BigDecimal MONTHS_PER_YEAR = BigDecimal.valueOf(12);
 
     private final SubscriptionRepository subscriptionRepository;
 
@@ -22,15 +23,7 @@ public class SubscriptionService {
     }
 
     public Subscription createSubscription(Subscription subscription) {
-
-        if (subscription.getName() == null || subscription.getName().isBlank()) {
-            throw new IllegalArgumentException("Subscription name cannot be empty");
-        }
-
-        if (subscription.getPrice() == null || subscription.getPrice().signum() <= 0) {
-            throw new IllegalArgumentException("Subscription price must be greater than zero");
-        }
-
+        validate(subscription);
         return subscriptionRepository.save(subscription);
     }
 
@@ -47,82 +40,62 @@ public class SubscriptionService {
         if (!subscriptionRepository.existsById(id)) {
             throw new IllegalArgumentException("Subscription not found");
         }
-
         subscriptionRepository.deleteById(id);
     }
+
     public Subscription updateSubscription(Long id, Subscription updatedSubscription) {
+        Subscription existingSubscription = getSubscriptionById(id);
+        validate(updatedSubscription);
 
-    Subscription existingSubscription = subscriptionRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Subscription not found"));
+        existingSubscription.setName(updatedSubscription.getName());
+        existingSubscription.setPrice(updatedSubscription.getPrice());
+        existingSubscription.setBillingPeriod(updatedSubscription.getBillingPeriod());
+        existingSubscription.setNextBillingDate(updatedSubscription.getNextBillingDate());
+        existingSubscription.setCategory(updatedSubscription.getCategory());
+        existingSubscription.setActive(updatedSubscription.isActive());
 
-    if (updatedSubscription.getName() == null || updatedSubscription.getName().isBlank()) {
-        throw new IllegalArgumentException("Subscription name cannot be empty");
+        return subscriptionRepository.save(existingSubscription);
     }
 
-    if (updatedSubscription.getPrice() == null ||
-            updatedSubscription.getPrice().signum() <= 0) {
-        throw new IllegalArgumentException("Subscription price must be greater than zero");
+    public BigDecimal calculateMonthlyTotal() {
+        return subscriptionRepository.findAll().stream()
+                .filter(Subscription::isActive)
+                .map(this::toMonthly)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    existingSubscription.setName(updatedSubscription.getName());
-    existingSubscription.setPrice(updatedSubscription.getPrice());
-    existingSubscription.setBillingPeriod(updatedSubscription.getBillingPeriod());
-    existingSubscription.setNextBillingDate(updatedSubscription.getNextBillingDate());
-    existingSubscription.setCategory(updatedSubscription.getCategory());
-    existingSubscription.setActive(updatedSubscription.isActive());
+    public BigDecimal calculateYearlyTotal() {
+        return subscriptionRepository.findAll().stream()
+                .filter(Subscription::isActive)
+                .map(this::toYearly)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
-    return subscriptionRepository.save(existingSubscription);
-}
-public BigDecimal calculateMonthlyTotal() {
+    private BigDecimal toYearly(Subscription subscription) {
+        BigDecimal price = subscription.getPrice();
+        return switch (subscription.getBillingPeriod()) {
+            case WEEKLY -> price.multiply(WEEKS_PER_YEAR);
+            case MONTHLY -> price.multiply(MONTHS_PER_YEAR);
+            case YEARLY -> price;
+        };
+    }
 
-    List<Subscription> subscriptions = subscriptionRepository.findAll();
-
-    BigDecimal total = BigDecimal.ZERO;
-
-    for (Subscription subscription : subscriptions) {
-
-        if (!subscription.isActive()) {
-            continue;
-        }
-
+    private BigDecimal toMonthly(Subscription subscription) {
         if (subscription.getBillingPeriod() == BillingPeriod.MONTHLY) {
-            total = total.add(subscription.getPrice());
+            return subscription.getPrice();
         }
-
-        if (subscription.getBillingPeriod() == BillingPeriod.YEARLY) {
-            BigDecimal monthlyPrice =
-                    subscription.getPrice().divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);
-
-            total = total.add(monthlyPrice);
-        }
+        return toYearly(subscription).divide(MONTHS_PER_YEAR, 2, RoundingMode.HALF_UP);
     }
 
-    return total;
-}
-public BigDecimal calculateYearlyTotal() {
-
-    List<Subscription> subscriptions = subscriptionRepository.findAll();
-
-    BigDecimal total = BigDecimal.ZERO;
-
-    for (Subscription subscription : subscriptions) {
-
-        if (!subscription.isActive()) {
-            continue;
+    private void validate(Subscription subscription) {
+        if (subscription.getName() == null || subscription.getName().isBlank()) {
+            throw new IllegalArgumentException("Subscription name cannot be empty");
         }
-
-        if (subscription.getBillingPeriod() == BillingPeriod.MONTHLY) {
-            BigDecimal yearlyPrice =
-                    subscription.getPrice().multiply(BigDecimal.valueOf(12));
-
-            total = total.add(yearlyPrice);
+        if (subscription.getPrice() == null || subscription.getPrice().signum() <= 0) {
+            throw new IllegalArgumentException("Subscription price must be greater than zero");
         }
-
-        if (subscription.getBillingPeriod() == BillingPeriod.YEARLY) {
-            total = total.add(subscription.getPrice());
+        if (subscription.getBillingPeriod() == null) {
+            throw new IllegalArgumentException("Billing period is required");
         }
     }
-
-    return total;
-}
 }
