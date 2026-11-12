@@ -1,19 +1,31 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { api, categoryLabels, dayLabel, money, type Category, type SpendingSummary, type Subscription } from '../api'
+import { api, categoryLabels, dayLabel, money, type Category, type SpendingSummary, type Subscription, type TotalSpending } from '../api'
 
 export default function Dashboard() {
   const [summary, setSummary] = useState<SpendingSummary[] | null>(null)
   const [upcoming, setUpcoming] = useState<Subscription[]>([])
   const [error, setError] = useState('')
+  const [attempt, setAttempt] = useState(0)
+
+  const retry = useCallback(() => { setError(''); setSummary(null); setAttempt(a => a + 1) }, [])
 
   useEffect(() => {
+    let cancelled = false
     Promise.all([api.summary(), api.upcoming(14)])
-      .then(([s, u]) => { setSummary(s); setUpcoming(u) })
-      .catch(e => setError(e.message))
-  }, [])
+      .then(([s, u]) => { if (!cancelled) { setSummary(s); setUpcoming(u) } })
+      .catch(e => { if (!cancelled) setError(e.message) })
+    return () => { cancelled = true }
+  }, [attempt])
 
-  if (error) return <p className="rounded-xl bg-pink/10 p-4 text-pink">{error}</p>
+  if (error) {
+    return (
+      <div role="alert" className="space-y-3 rounded-2xl bg-pink/10 p-5 text-pink">
+        <p>{error}</p>
+        <button onClick={retry} className="rounded-full border border-pink px-4 py-2 text-sm font-semibold hover:bg-pink hover:text-white">Tekrar dene</button>
+      </div>
+    )
+  }
   if (!summary) return <p className="text-zinc-400">Yükleniyor…</p>
 
   if (summary.length === 0 && upcoming.length === 0) {
@@ -21,7 +33,7 @@ export default function Dashboard() {
       <div className="rounded-3xl border border-dashed border-line p-10 text-center">
         <div className="text-5xl">🫥</div>
         <h2 className="mt-3 text-xl font-bold">Henüz hiç abonelik yok</h2>
-        <p className="mt-1 text-zinc-400">İlk aboneliğini ekle, her ay ne kadar yaktığını gör.</p>
+        <p className="mt-1 text-zinc-400">İlk aboneliğini ekle, her ay ne kadar harcadığını gör.</p>
         <Link to="/app/abonelikler" className="mt-5 inline-block rounded-full bg-lime px-6 py-3 font-bold text-ink">İlk aboneliği ekle</Link>
       </div>
     )
@@ -29,6 +41,8 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
+      {summary.length > 1 && <CombinedTotal currencies={summary.map(s => s.currency)} />}
+
       {summary.map(s => {
         const cats = Object.entries(s.monthlyByCategory) as [Category, number][]
         const max = Math.max(...cats.map(([, v]) => v), 1)
@@ -36,7 +50,7 @@ export default function Dashboard() {
           <section key={s.currency} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="rounded-3xl bg-gradient-to-br from-violet to-pink p-5">
-                <p className="text-sm font-semibold text-white/80">Aylık yaktığın</p>
+                <p className="text-sm font-semibold text-white/80">Aylık harcadığın</p>
                 <p className="mt-1 text-3xl font-extrabold">{money(s.monthlyTotal, s.currency)}</p>
               </div>
               <div className="rounded-3xl border border-line bg-panel p-5">
@@ -92,5 +106,48 @@ export default function Dashboard() {
         )}
       </section>
     </div>
+  )
+}
+
+/** All currencies converted into one, so mixed TRY/USD/EUR subscriptions still add up to one number. */
+function CombinedTotal({ currencies }: { currencies: string[] }) {
+  const [target, setTarget] = useState(currencies.includes('TRY') ? 'TRY' : currencies[0])
+  const [total, setTotal] = useState<TotalSpending | null>(null)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    api.total(target)
+      .then(t => { if (!cancelled) { setTotal(t); setFailed(false) } })
+      .catch(() => { if (!cancelled) setFailed(true) })
+    return () => { cancelled = true }
+  }, [target])
+
+  return (
+    <section className="rounded-3xl border border-violet/50 bg-panel p-5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 className="font-bold">Hepsi bir arada</h3>
+        <select aria-label="Toplam para birimi" value={target} onChange={e => { setTotal(null); setTarget(e.target.value) }}
+          className="rounded-xl border border-line bg-ink px-3 py-1.5 text-sm">
+          {[...new Set([...currencies, 'TRY', 'USD', 'EUR'])].map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
+      </div>
+      {failed ? (
+        <p className="mt-3 text-sm text-zinc-400">Kurlar şu an alınamadı, toplam gösterilemiyor.</p>
+      ) : !total ? (
+        <p className="mt-3 text-sm text-zinc-400">Hesaplanıyor…</p>
+      ) : (
+        <>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <div><p className="text-sm text-zinc-400">Aylık</p><p className="text-3xl font-extrabold">{money(total.monthlyTotal, total.currency)}</p></div>
+            <div><p className="text-sm text-zinc-400">Yıllık</p><p className="text-3xl font-extrabold">{money(total.yearlyTotal, total.currency)}</p></div>
+          </div>
+          <p className="mt-3 text-xs text-zinc-500">
+            {total.ratesDate ? `Kurlar: ${new Date(total.ratesDate + 'T00:00:00').toLocaleDateString('tr-TR')} (Avrupa Merkez Bankası referans kurları).` : ''}
+            {total.unconvertedCurrencies.length > 0 && ` Çevrilemeyen para birimleri toplama dahil değil: ${total.unconvertedCurrencies.join(', ')}.`}
+          </p>
+        </>
+      )}
+    </section>
   )
 }

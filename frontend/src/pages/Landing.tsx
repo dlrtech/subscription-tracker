@@ -11,14 +11,14 @@ const chips = [
 const steps = [
   { n: '1', t: 'Hesap aç', d: '30 saniye. Kredi kartı yok, kafa karışıklığı yok.' },
   { n: '2', t: 'Abonelikleri ekle', d: 'Netflix, Spotify, spor salonu… ne varsa listele.' },
-  { n: '3', t: 'Gerçeği gör', d: 'Her ay ve yıl ne kadar yaktığını, kime ne ödediğini gör.' },
+  { n: '3', t: 'Gerçeği gör', d: 'Her ay ve yıl ne kadar harcadığını, kime ne ödediğini gör.' },
 ]
 
 const features = [
-  { i: '⏰', t: 'Sürpriz fatura yok', d: 'Önümüzdeki günlerde hangi ödeme geliyor, tek bakışta gör.' },
+  { i: '⏰', t: 'Sürpriz fatura yok', d: 'Hangi ödeme ne zaman geliyor tek bakışta gör; istersen ödemeden birkaç gün önce e-postayla hatırlatırız.' },
   { i: '📊', t: 'Aylık & yıllık toplam', d: '"Ayda 40 TL zaten" diyorsun ama yılda ne tutuyor, bak.' },
   { i: '🏷️', t: 'Kategori kategori', d: 'Eğlence mi, müzik mi, yazılım mı? Paran nereye gidiyor anla.' },
-  { i: '🌍', t: 'Her para birimi', d: 'TRY, USD, EUR… yabancı abonelikler de burada.' },
+  { i: '🌍', t: 'Her para birimi', d: 'TRY, USD, EUR… yabancı abonelikler de burada; istersen hepsini tek para biriminde toplayıp gör.' },
   { i: '🔒', t: 'Verin sende', d: 'Şifren şifreli saklanır, hesabını istediğin an silebilirsin.' },
   { i: '📱', t: 'Telefonda rahat', d: 'Otobüste de, derste de. Cebinde kullanmak için tasarlandı.' },
 ]
@@ -26,6 +26,7 @@ const features = [
 const faqs = [
   { q: 'Ücretsiz mi?', a: 'Evet, şu an tamamen ücretsiz.' },
   { q: 'Kart bilgilerimi istiyor mu?', a: 'Hayır. Sadece abonelik adı, tutar ve tarih giriyorsun; ödeme yapmıyoruz.' },
+  { q: 'Ödeme hatırlatması nasıl çalışıyor?', a: 'E-postanı doğruladıktan sonra, seçtiğin kadar gün önce (1–14) yaklaşan ödemelerin için tek bir e-posta alırsın. Profil sayfasından kapatabilirsin.' },
   { q: 'Aboneliği benim yerime iptal eder mi?', a: 'Hayır, ama neyi iptal etmen gerektiğini net görmeni sağlar.' },
   { q: 'Verilerimi silebilir miyim?', a: 'Evet. Profil sayfasından hesabını tek tıkla kalıcı olarak silebilirsin.' },
 ]
@@ -49,7 +50,7 @@ export default function Landing() {
           <div>
             <p className="mb-4 inline-block rounded-full border border-line bg-panel px-3 py-1 text-xs font-semibold text-lime">💸 Abonelik kaosuna son</p>
             <h1 className="text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl">
-              Aylık kaç TL'yi <span className="gradient-text">abonelikle yakıyorsun?</span>
+              Aylık kaç TL'yi <span className="gradient-text">abonelikle harcıyorsun?</span>
             </h1>
             <p className="mt-5 max-w-lg text-lg text-zinc-300">
               Netflix, Spotify, YouTube Premium, iCloud… hepsi küçük küçük çekiliyor ve ay sonunda "paramın gittiği yer" belli değil. Hepsini tek yerde topla, gerçek rakamı gör.
@@ -66,7 +67,7 @@ export default function Landing() {
               <span key={c.t} style={{ ['--r' as string]: c.r }} className={`floaty absolute ${c.pos} ${c.c} rounded-full px-4 py-2 text-sm font-bold shadow-lg`}>{c.t}</span>
             ))}
             <div className="absolute inset-x-4 top-12 rounded-3xl border border-line bg-panel p-5 shadow-2xl">
-              <p className="text-xs text-zinc-400">Bu ay yaktığın</p>
+              <p className="text-xs text-zinc-400">Bu ay harcadığın</p>
               <p className="gradient-text text-4xl font-black">₺1.249,90</p>
               <div className="mt-4 space-y-3 text-sm">
                 {[['🎬 Eğlence', '70%', 'from-violet to-pink'], ['🎧 Müzik', '45%', 'from-pink to-lime'], ['☁️ Bulut', '20%', 'from-sky to-violet']].map(([l, w, g]) => (

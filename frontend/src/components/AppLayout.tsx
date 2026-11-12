@@ -1,5 +1,27 @@
+import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { api } from '../api'
 import { useAuth } from '../auth'
+
+function VerifyBanner() {
+  const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'failed'>('idle')
+  const resend = async () => {
+    setState('sending')
+    try { await api.resendVerification(); setState('sent') } catch { setState('failed') }
+  }
+  return (
+    <div role="status" className="border-b border-line bg-violet/15 px-4 py-2 text-center text-sm">
+      {state === 'sent'
+        ? 'Doğrulama e-postası gönderildi. Gelen kutunu kontrol et. ✉️'
+        : <>
+            E-postanı doğrula, ödeme hatırlatmalarını alabil. ✉️{' '}
+            <button onClick={resend} disabled={state === 'sending'} className="font-bold underline disabled:opacity-60">
+              {state === 'sending' ? 'Gönderiliyor…' : state === 'failed' ? 'Olmadı, tekrar dene' : 'Doğrulama e-postası gönder'}
+            </button>
+          </>}
+    </div>
+  )
+}
 
 const tabs = [
   { to: '/app', label: 'Özet', icon: '📊', end: true },
@@ -33,6 +55,8 @@ export default function AppLayout() {
           </div>
         </div>
       </header>
+
+      {user && !user.emailVerified && <VerifyBanner />}
 
       <main className="mx-auto max-w-5xl px-4 py-6"><Outlet /></main>
 
