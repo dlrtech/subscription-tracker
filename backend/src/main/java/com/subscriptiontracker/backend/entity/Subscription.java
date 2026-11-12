@@ -64,6 +64,10 @@ public class Subscription {
     @Column(nullable = false)
     private boolean active;
 
+    /** The billing date a reminder e-mail was last sent for. */
+    @Column(name = "last_reminded_for")
+    private LocalDate lastRemindedFor;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -155,6 +159,14 @@ public class Subscription {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public LocalDate getLastRemindedFor() {
+        return lastRemindedFor;
+    }
+
+    public void setLastRemindedFor(LocalDate lastRemindedFor) {
+        this.lastRemindedFor = lastRemindedFor;
     }
 
     public Instant getCreatedAt() {

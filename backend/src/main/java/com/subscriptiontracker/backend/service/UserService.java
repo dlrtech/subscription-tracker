@@ -35,7 +35,19 @@ public class UserService {
     @Transactional
     public User updateProfile(Long id, UpdateProfileRequest request) {
         User user = getUserById(id);
-        user.setName(request.name().trim());
+        if (request.name() != null) {
+            String name = request.name().trim();
+            if (name.isEmpty()) {
+                throw new IllegalArgumentException("Name must not be blank");
+            }
+            user.setName(name);
+        }
+        if (request.remindersEnabled() != null) {
+            user.setRemindersEnabled(request.remindersEnabled());
+        }
+        if (request.reminderDays() != null) {
+            user.setReminderDays(request.reminderDays());
+        }
         return user;
     }
 

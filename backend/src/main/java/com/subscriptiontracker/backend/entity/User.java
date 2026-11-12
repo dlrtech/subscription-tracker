@@ -27,6 +27,16 @@ public class User {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified;
+
+    @Column(name = "reminders_enabled", nullable = false)
+    private boolean remindersEnabled = true;
+
+    /** How many days before a payment the reminder e-mail is sent. */
+    @Column(name = "reminder_days", nullable = false)
+    private int reminderDays = 3;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -65,5 +75,29 @@ public class User {
 
     public Instant getCreatedAt() {
         return createdAt;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public boolean isRemindersEnabled() {
+        return remindersEnabled;
+    }
+
+    public void setRemindersEnabled(boolean remindersEnabled) {
+        this.remindersEnabled = remindersEnabled;
+    }
+
+    public int getReminderDays() {
+        return reminderDays;
+    }
+
+    public void setReminderDays(int reminderDays) {
+        this.reminderDays = reminderDays;
     }
 }

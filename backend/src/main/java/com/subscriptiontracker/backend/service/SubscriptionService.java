@@ -3,6 +3,10 @@ package com.subscriptiontracker.backend.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,12 +14,16 @@ import com.subscriptiontracker.backend.dto.SpendingSummaryResponse;
 import com.subscriptiontracker.backend.dto.SubscriptionRequest;
 import com.subscriptiontracker.backend.entity.Subscription;
 import com.subscriptiontracker.backend.enums.Category;
+import com.subscriptiontracker.backend.enums.SubscriptionSort;
 import com.subscriptiontracker.backend.exception.ResourceNotFoundException;
 import com.subscriptiontracker.backend.repository.SubscriptionRepository;
+
+import jakarta.persistence.criteria.Predicate;
 
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
@@ -57,6 +65,28 @@ public class SubscriptionService {
         return active == null
                 ? subscriptionRepository.findByUserIdOrderByNextBillingDateAscIdAsc(userId)
                 : subscriptionRepository.findByUserIdAndActiveOrderByNextBillingDateAscIdAsc(userId, active);
+    }
+
+    /** Filtered, sorted and paged listing: {@code q} matches the name (case-insensitive, contains). */
+    @Transactional(readOnly = true)
+    public Page<Subscription> search(Long userId, Boolean active, String q, SubscriptionSort sort,
+                                     boolean descending, int page, int size) {
+        Specification<Subscription> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get("user").get("id"), userId));
+            if (active != null) {
+                predicates.add(cb.equal(root.get("active"), active));
+            }
+            if (q != null && !q.isBlank()) {
+                String escaped = q.trim().toLowerCase(Locale.ROOT)
+                        .replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+                predicates.add(cb.like(cb.lower(root.get("name")), "%" + escaped + "%", '\\'));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+        Sort order = Sort.by(descending ? Sort.Direction.DESC : Sort.Direction.ASC, sort.property())
+                .and(Sort.by(Sort.Direction.ASC, "id"));
+        return subscriptionRepository.findAll(spec, PageRequest.of(page, size, order));
     }
 
     @Transactional(readOnly = true)

@@ -25,6 +25,15 @@ services:
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
       DEFAULT_CURRENCY: ${DEFAULT_CURRENCY:-TRY}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      # Plain http on localhost: the refresh cookie cannot be Secure/SameSite=None there.
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      COOKIE_SAMESITE: ${COOKIE_SAMESITE:-Lax}
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-587}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD:-}
+      MAIL_FROM: ${MAIL_FROM:-subtracker <no-reply@localhost>}
     ports:
       - "8080:8080"
 

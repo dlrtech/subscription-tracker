@@ -4,3 +4,11 @@ spring.datasource.url=jdbc:postgresql://localhost:5432/subscription_tracker
 spring.datasource.username=postgres
 spring.datasource.password=change-me
 app.jwt.secret=replace-with-a-random-string-of-at-least-32-characters
+
+# Plain http on localhost: the refresh cookie cannot be Secure here.
+app.auth.cookie-secure=false
+app.auth.cookie-same-site=Lax
+# Without SMTP settings the e-mails (verification, password reset) are printed to the console.
+# spring.mail.host=smtp.example.com
+# spring.mail.username=...
+# spring.mail.password=...

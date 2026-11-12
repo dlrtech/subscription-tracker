@@ -4,9 +4,17 @@ import com.subscriptiontracker.backend.entity.User;
 
 import java.time.Instant;
 
-public record UserResponse(Long id, String email, String name, Instant createdAt) {
+public record UserResponse(
+        Long id,
+        String email,
+        String name,
+        boolean emailVerified,
+        boolean remindersEnabled,
+        int reminderDays,
+        Instant createdAt) {
 
     public static UserResponse from(User user) {
-        return new UserResponse(user.getId(), user.getEmail(), user.getName(), user.getCreatedAt());
+        return new UserResponse(user.getId(), user.getEmail(), user.getName(), user.isEmailVerified(),
+                user.isRemindersEnabled(), user.getReminderDays(), user.getCreatedAt());
     }
 }
