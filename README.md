@@ -51,10 +51,6 @@ Aynı kontroller her push ve pull request'te GitHub Actions ile çalışır (`.g
 
 > Render ücretsiz planı boşta uyur; uyurken gece görevleri (tarih ilerletme, hatırlatma) çalışmaz. Hatırlatmaların güvenilir olması için sürekli açık bir plan kullan.
 
-### Frontend (Vercel)
-
-*Root Directory:* `frontend`, ortam değişkeni `VITE_API_URL=https://<backend-adresin>`. `vercel.json` tüm yolları `index.html`'e yönlendirir (React Router için).
-
 ### Önemli: cookie ve alan adı
 
 Frontend `*.vercel.app`, API `*.onrender.com` ise tarayıcı için **farklı site**'dir; oturum cookie'si üçüncü taraf cookie sayılır. Chrome'da çalışır, Safari ve bazı gizlilik ayarlarında engellenir ve sayfa yenilenince oturum düşer. Kalıcı çözüm: kendi alan adının iki alt alan adını kullan (`app.ornek.com` → Vercel, `api.ornek.com` → Render) ve `COOKIE_SAMESITE=Lax` yap.
