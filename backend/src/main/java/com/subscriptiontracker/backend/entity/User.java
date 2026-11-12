@@ -37,6 +37,10 @@ public class User {
     @Column(name = "reminder_days", nullable = false)
     private int reminderDays = 3;
 
+    /** Currency totals are converted into; subscriptions keep the currency they were entered in. */
+    @Column(name = "preferred_currency", nullable = false, length = 3)
+    private String preferredCurrency = "TRY";
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -91,6 +95,14 @@ public class User {
 
     public void setRemindersEnabled(boolean remindersEnabled) {
         this.remindersEnabled = remindersEnabled;
+    }
+
+    public String getPreferredCurrency() {
+        return preferredCurrency;
+    }
+
+    public void setPreferredCurrency(String preferredCurrency) {
+        this.preferredCurrency = preferredCurrency;
     }
 
     public int getReminderDays() {

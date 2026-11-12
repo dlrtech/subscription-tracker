@@ -252,6 +252,16 @@ class AccountFlowsApiTest extends ApiTestSupport {
                 .andExpect(jsonPath("$.reminderDays").value(7))
                 .andExpect(jsonPath("$.name").value("Test User"));
 
+        mockMvc.perform(authorized(get("/api/users/me"), token))
+                .andExpect(jsonPath("$.preferredCurrency").value("TRY"));
+        mockMvc.perform(json(put("/api/users/me"), token, "{\"preferredCurrency\":\"usd\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.preferredCurrency").value("USD"))
+                .andExpect(jsonPath("$.reminderDays").value(7));
+        mockMvc.perform(json(put("/api/users/me"), token, "{\"preferredCurrency\":\"DOLLAR\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.preferredCurrency").exists());
+
         mockMvc.perform(json(put("/api/users/me"), token, "{\"reminderDays\":30}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.reminderDays").exists());

@@ -48,6 +48,9 @@ public class UserService {
         if (request.reminderDays() != null) {
             user.setReminderDays(request.reminderDays());
         }
+        if (request.preferredCurrency() != null) {
+            user.setPreferredCurrency(request.preferredCurrency().toUpperCase(java.util.Locale.ROOT));
+        }
         return user;
     }
 

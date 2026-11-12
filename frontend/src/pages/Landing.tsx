@@ -2,25 +2,25 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../auth'
 
 const chips = [
-  { t: '🎬 Netflix', c: 'bg-pink/20 text-pink', pos: 'left-[4%] top-[8%]', r: '-6deg' },
-  { t: '🎧 Spotify', c: 'bg-lime/20 text-lime', pos: 'right-[6%] top-[2%]', r: '5deg' },
-  { t: '▶️ YouTube Premium', c: 'bg-violet/25 text-violet', pos: 'left-[0%] bottom-[18%]', r: '4deg' },
-  { t: '☁️ iCloud', c: 'bg-sky/20 text-sky', pos: 'right-[0%] bottom-[8%]', r: '-5deg' },
+  { t: '🎬 Netflix', c: 'bg-pink', pos: 'left-[-2%] top-[6%]', r: '-6deg', dur: '6s' },
+  { t: '🎧 Spotify', c: 'bg-mint', pos: 'right-[0%] top-[0%]', r: '5deg', dur: '7s' },
+  { t: '▶️ YouTube Premium', c: 'bg-peach', pos: 'left-[-6%] bottom-[16%]', r: '4deg', dur: '8s' },
+  { t: '☁️ iCloud', c: 'bg-sky', pos: 'right-[-4%] bottom-[6%]', r: '-5deg', dur: '6.5s' },
 ]
 
 const steps = [
-  { n: '1', t: 'Hesap aç', d: '30 saniye. Kredi kartı yok, kafa karışıklığı yok.' },
-  { n: '2', t: 'Abonelikleri ekle', d: 'Netflix, Spotify, spor salonu… ne varsa listele.' },
-  { n: '3', t: 'Gerçeği gör', d: 'Her ay ve yıl ne kadar harcadığını, kime ne ödediğini gör.' },
+  { n: '1', t: 'Hesap aç', d: '30 saniye. Kredi kartı yok, kafa karışıklığı yok.', c: 'bg-pink' },
+  { n: '2', t: 'Abonelikleri ekle', d: 'Netflix, Spotify, spor salonu… ne varsa listele.', c: 'bg-mint' },
+  { n: '3', t: 'Gerçeği gör', d: 'Her ay ve yıl ne kadar harcadığını, kime ne ödediğini gör.', c: 'bg-sky' },
 ]
 
 const features = [
-  { i: '⏰', t: 'Sürpriz fatura yok', d: 'Hangi ödeme ne zaman geliyor tek bakışta gör; istersen ödemeden birkaç gün önce e-postayla hatırlatırız.' },
-  { i: '📊', t: 'Aylık & yıllık toplam', d: '"Ayda 40 TL zaten" diyorsun ama yılda ne tutuyor, bak.' },
-  { i: '🏷️', t: 'Kategori kategori', d: 'Eğlence mi, müzik mi, yazılım mı? Paran nereye gidiyor anla.' },
-  { i: '🌍', t: 'Her para birimi', d: 'TRY, USD, EUR… yabancı abonelikler de burada; istersen hepsini tek para biriminde toplayıp gör.' },
-  { i: '🔒', t: 'Verin sende', d: 'Şifren şifreli saklanır, hesabını istediğin an silebilirsin.' },
-  { i: '📱', t: 'Telefonda rahat', d: 'Otobüste de, derste de. Cebinde kullanmak için tasarlandı.' },
+  { i: '⏰', t: 'Sürpriz fatura yok', d: 'Hangi ödeme ne zaman geliyor tek bakışta gör; istersen ödemeden birkaç gün önce e-postayla hatırlatırız.', c: 'bg-pink' },
+  { i: '📊', t: 'Aylık & yıllık toplam', d: '"Ayda 40 TL zaten" diyorsun ama yılda ne tutuyor, bak.', c: 'bg-violet' },
+  { i: '🏷️', t: 'Kategori kategori', d: 'Eğlence mi, müzik mi, yazılım mı? Paran nereye gidiyor anla.', c: 'bg-lemon' },
+  { i: '🌍', t: 'Her para birimi', d: 'TRY, USD, EUR… yabancı abonelikler de burada; istersen hepsini tek para biriminde toplayıp gör.', c: 'bg-sky' },
+  { i: '🔒', t: 'Verin sende', d: 'Şifren şifreli saklanır, hesabını istediğin an silebilirsin.', c: 'bg-mint' },
+  { i: '📱', t: 'Telefonda rahat', d: 'Otobüste de, derste de. Cebinde kullanmak için tasarlandı.', c: 'bg-peach' },
 ]
 
 const faqs = [
@@ -34,60 +34,66 @@ const faqs = [
 export default function Landing() {
   const { user } = useAuth()
   const cta = user ? { to: '/app', label: 'Uygulamaya git' } : { to: '/kayit', label: 'Ücretsiz başla' }
+  const year = new Date().getFullYear()
 
   return (
     <div className="overflow-x-hidden">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
-        <span className="text-xl font-extrabold tracking-tight">sub<span className="gradient-text">tracker</span></span>
+        <span className="flex items-center gap-2 text-xl font-extrabold tracking-tight">
+          <span aria-hidden="true" className="floaty grid size-10 place-items-center rounded-2xl bg-gradient-to-br from-violet to-pink text-xl shadow-md">💸</span>
+          sub<span className="gradient-text">tracker</span>
+        </span>
         <div className="flex items-center gap-2 text-sm font-semibold">
-          {!user && <Link to="/giris" className="rounded-full px-4 py-2 text-zinc-300 hover:text-white">Giriş</Link>}
-          <Link to={cta.to} className="rounded-full bg-white px-4 py-2 text-ink">{user ? 'Uygulama' : 'Kayıt ol'}</Link>
+          {!user && <Link to="/giris" className="rounded-full px-4 py-2 muted hover:text-ink">Giriş</Link>}
+          <Link to={cta.to} className="btn btn-dark !py-2">{user ? 'Uygulama' : 'Kayıt ol'}</Link>
         </div>
       </header>
 
-      <section className="glow">
+      <section>
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 pb-20 pt-10 md:grid-cols-2 md:pt-20">
           <div>
-            <p className="mb-4 inline-block rounded-full border border-line bg-panel px-3 py-1 text-xs font-semibold text-lime">💸 Abonelik kaosuna son</p>
-            <h1 className="text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl">
+            <p className="pop mb-4 inline-block rounded-full border border-line bg-white/80 px-3 py-1 text-xs font-bold text-violet-deep">💸 Abonelik kaosuna son</p>
+            <h1 className="rise text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl">
               Aylık kaç TL'yi <span className="gradient-text">abonelikle harcıyorsun?</span>
             </h1>
-            <p className="mt-5 max-w-lg text-lg text-zinc-300">
+            <p className="rise mt-5 max-w-lg text-lg muted" style={{ ['--d' as string]: '0.1s' }}>
               Netflix, Spotify, YouTube Premium, iCloud… hepsi küçük küçük çekiliyor ve ay sonunda "paramın gittiği yer" belli değil. Hepsini tek yerde topla, gerçek rakamı gör.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link to={cta.to} className="rounded-full bg-lime px-7 py-4 text-lg font-extrabold text-ink transition hover:scale-105">{cta.label} →</Link>
-              <a href="#nasil" className="rounded-full border border-line px-6 py-4 font-semibold text-zinc-200 hover:border-zinc-500">Nasıl çalışır?</a>
+            <div className="rise mt-8 flex flex-wrap items-center gap-3" style={{ ['--d' as string]: '0.2s' }}>
+              <Link to={cta.to} className="btn btn-primary !px-7 !py-4 text-lg">{cta.label} →</Link>
+              <a href="#nasil" className="btn btn-ghost !py-4">Nasıl çalışır?</a>
             </div>
-            <p className="mt-4 text-sm text-zinc-500">Kart bilgisi yok · 30 saniyede kurulum</p>
+            <p className="mt-4 text-sm muted">Kart bilgisi yok · 30 saniyede kurulum</p>
           </div>
 
-          <div className="relative mx-auto h-[420px] w-full max-w-sm">
+          <div className="relative mx-auto h-[430px] w-full max-w-sm">
             {chips.map(c => (
-              <span key={c.t} style={{ ['--r' as string]: c.r }} className={`floaty absolute ${c.pos} ${c.c} rounded-full px-4 py-2 text-sm font-bold shadow-lg`}>{c.t}</span>
+              <span key={c.t} style={{ ['--r' as string]: c.r, ['--dur' as string]: c.dur }}
+                className={`floaty absolute z-10 ${c.pos} ${c.c} rounded-full px-4 py-2 text-sm font-extrabold shadow-lg`}>{c.t}</span>
             ))}
-            <div className="absolute inset-x-4 top-12 rounded-3xl border border-line bg-panel p-5 shadow-2xl">
-              <p className="text-xs text-zinc-400">Bu ay harcadığın</p>
+            <div className="card pop absolute inset-x-4 top-12 p-5" style={{ ['--d' as string]: '0.25s' }}>
+              <p className="text-xs muted">Bu ay harcadığın</p>
               <p className="gradient-text text-4xl font-black">₺1.249,90</p>
               <div className="mt-4 space-y-3 text-sm">
-                {[['🎬 Eğlence', '70%', 'from-violet to-pink'], ['🎧 Müzik', '45%', 'from-pink to-lime'], ['☁️ Bulut', '20%', 'from-sky to-violet']].map(([l, w, g]) => (
+                {[['🎬 Eğlence', '70%', 'from-violet to-pink'], ['🎧 Müzik', '45%', 'from-pink to-peach'], ['☁️ Bulut', '20%', 'from-sky to-violet']].map(([l, w, g], i) => (
                   <div key={l}>
-                    <div className="mb-1 flex justify-between"><span>{l}</span></div>
-                    <div className="h-2 rounded-full bg-ink"><div className={`h-full rounded-full bg-gradient-to-r ${g}`} style={{ width: w }} /></div>
+                    <div className="mb-1 flex justify-between font-semibold"><span>{l}</span></div>
+                    <div className="h-2.5 rounded-full bg-line"><div className={`bar-grow h-full rounded-full bg-gradient-to-r ${g}`} style={{ width: w, ['--d' as string]: `${0.5 + i * 0.15}s` }} /></div>
                   </div>
                 ))}
               </div>
-              <div className="mt-5 flex items-center justify-between rounded-2xl bg-ink px-4 py-3">
-                <span>⏰ Spotify</span><span className="font-bold text-lime">Yarın · ₺59,99</span>
+              <div className="mt-5 flex items-center justify-between rounded-2xl bg-mint/60 px-4 py-3">
+                <span className="flex items-center gap-2 font-semibold"><span aria-hidden="true" className="grid size-8 place-items-center rounded-xl bg-mint text-lg">🎧</span>Spotify</span>
+                <span className="font-extrabold text-mint-deep">Yarın · ₺59,99</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="border-y border-line bg-panel/40 py-5">
-        <p className="mx-auto max-w-6xl px-5 text-center text-sm text-zinc-400">
-          Ortalama bir genç <b className="text-white">5+ abonelik</b> kullanıyor ve çoğunun toplamını bilmiyor. Sen bileceksin. 😎
+      <section className="border-y border-line bg-white/60 py-5 backdrop-blur">
+        <p className="mx-auto max-w-6xl px-5 text-center text-sm muted">
+          Ortalama bir genç <b className="text-ink">5+ abonelik</b> kullanıyor ve çoğunun toplamını bilmiyor. Sen bileceksin. 😎
         </p>
       </section>
 
@@ -95,10 +101,10 @@ export default function Landing() {
         <h2 className="text-3xl font-black sm:text-4xl">3 adımda <span className="gradient-text">netlik</span></h2>
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {steps.map(s => (
-            <div key={s.n} className="rounded-3xl border border-line bg-panel p-6">
-              <span className="grid size-10 place-items-center rounded-full bg-lime text-lg font-black text-ink">{s.n}</span>
-              <h3 className="mt-4 text-xl font-bold">{s.t}</h3>
-              <p className="mt-1 text-zinc-400">{s.d}</p>
+            <div key={s.n} className="card card-hover p-6">
+              <span className={`${s.c} grid size-11 place-items-center rounded-2xl text-lg font-black shadow-sm`}>{s.n}</span>
+              <h3 className="mt-4 text-xl font-extrabold">{s.t}</h3>
+              <p className="mt-1 muted">{s.d}</p>
             </div>
           ))}
         </div>
@@ -108,10 +114,10 @@ export default function Landing() {
         <h2 className="text-3xl font-black sm:text-4xl">Neden <span className="gradient-text">subtracker?</span></h2>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {features.map(f => (
-            <div key={f.t} className="rounded-3xl border border-line bg-panel p-6 transition hover:-translate-y-1 hover:border-violet">
-              <div className="text-3xl">{f.i}</div>
-              <h3 className="mt-3 text-lg font-bold">{f.t}</h3>
-              <p className="mt-1 text-zinc-400">{f.d}</p>
+            <div key={f.t} className="card card-hover p-6">
+              <div aria-hidden="true" className={`${f.c} grid size-12 place-items-center rounded-2xl text-2xl shadow-sm`}>{f.i}</div>
+              <h3 className="mt-3 text-lg font-extrabold">{f.t}</h3>
+              <p className="mt-1 muted">{f.d}</p>
             </div>
           ))}
         </div>
@@ -121,23 +127,23 @@ export default function Landing() {
         <h2 className="text-3xl font-black sm:text-4xl">Sık sorulanlar</h2>
         <div className="mt-8 space-y-3">
           {faqs.map(f => (
-            <details key={f.q} className="group rounded-2xl border border-line bg-panel px-5 py-4">
-              <summary className="cursor-pointer list-none font-bold">{f.q}</summary>
-              <p className="mt-2 text-zinc-400">{f.a}</p>
+            <details key={f.q} className="card group px-5 py-4 open:shadow-lg">
+              <summary className="cursor-pointer list-none font-extrabold">{f.q}</summary>
+              <p className="mt-2 muted">{f.a}</p>
             </details>
           ))}
         </div>
       </section>
 
       <section className="px-5 pb-20">
-        <div className="mx-auto max-w-4xl rounded-[2rem] bg-gradient-to-br from-violet via-pink to-[#ffb86b] p-10 text-center sm:p-14">
+        <div className="mx-auto max-w-4xl rounded-[2rem] bg-gradient-to-br from-violet via-pink to-peach p-10 text-center shadow-xl sm:p-14">
           <h2 className="text-3xl font-black sm:text-5xl">Paranın nereye gittiğini öğrenmeye hazır mısın?</h2>
-          <Link to={cta.to} className="mt-8 inline-block rounded-full bg-ink px-8 py-4 text-lg font-extrabold text-white transition hover:scale-105">{cta.label} →</Link>
+          <Link to={cta.to} className="btn btn-dark mt-8 !px-8 !py-4 text-lg">{cta.label} →</Link>
         </div>
       </section>
 
-      <footer className="border-t border-line py-8 text-center text-sm text-zinc-500">
-        © {new Date().getFullYear()} subtracker · Gençler için, abonelik sürprizlerine karşı. 💜
+      <footer className="border-t border-line py-8 text-center text-sm muted">
+        © {year} subtracker · Gençler için, abonelik sürprizlerine karşı. 💜
       </footer>
     </div>
   )

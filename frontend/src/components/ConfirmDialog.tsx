@@ -21,15 +21,16 @@ export default function ConfirmDialog({ title, message, confirmLabel, busy, onCo
   }, [onCancel])
 
   return (
-    <div className="fixed inset-0 z-40 grid place-items-center bg-black/70 px-4" onClick={onCancel}>
+    <div className="fixed inset-0 z-40 grid place-items-center bg-ink/40 px-4 backdrop-blur-sm" onClick={onCancel}>
       <div role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-msg"
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-sm space-y-3 rounded-3xl border border-line bg-panel p-6">
+        className="card pop w-full max-w-sm space-y-3 p-6">
+        <div aria-hidden="true" className="grid size-12 place-items-center rounded-2xl bg-pink text-2xl">🗑️</div>
         <h2 id="confirm-title" className="text-lg font-extrabold">{title}</h2>
-        <p id="confirm-msg" className="text-sm text-zinc-400">{message}</p>
+        <p id="confirm-msg" className="text-sm muted">{message}</p>
         <div className="flex gap-3 pt-2">
-          <button ref={cancelRef} type="button" onClick={onCancel} className="flex-1 rounded-xl border border-line py-3 font-semibold">Vazgeç</button>
-          <button type="button" disabled={busy} onClick={onConfirm} className="flex-1 rounded-xl bg-pink py-3 font-bold text-white disabled:opacity-60">
+          <button ref={cancelRef} type="button" onClick={onCancel} className="btn btn-ghost flex-1">Vazgeç</button>
+          <button type="button" disabled={busy} onClick={onConfirm} className="btn btn-danger flex-1">
             {busy ? 'Bir saniye…' : confirmLabel}
           </button>
         </div>

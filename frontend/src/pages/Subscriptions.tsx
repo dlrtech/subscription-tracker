@@ -4,9 +4,10 @@ import {
   type BillingPeriod, type Category, type ListQuery, type Subscription, type SubscriptionInput,
 } from '../api'
 import ConfirmDialog from '../components/ConfirmDialog'
+import ServiceIcon from '../components/ServiceIcon'
 
-const field = 'w-full rounded-xl border border-line bg-ink px-4 py-3 text-white outline-none focus:border-violet'
-const small = 'rounded-xl border border-line bg-ink px-3 py-2 text-sm text-white outline-none focus:border-violet'
+const field = 'input'
+const small = 'input !py-2 text-sm'
 const PAGE = 20
 
 const empty = (): SubscriptionInput => ({
@@ -92,7 +93,7 @@ export default function Subscriptions() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-extrabold">Aboneliklerin</h1>
-        <button onClick={() => setEditing({ id: null, data: empty() })} className="rounded-full bg-lime px-5 py-2.5 font-bold text-ink">+ Ekle</button>
+        <button onClick={() => setEditing({ id: null, data: empty() })} className="btn btn-primary">+ Ekle</button>
       </div>
 
       <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto]">
@@ -110,36 +111,39 @@ export default function Subscriptions() {
         </select>
       </div>
 
-      {error && <p role="alert" className="rounded-xl bg-pink/10 p-3 text-pink">{error}</p>}
-      {!items ? <p className="text-zinc-400">Yükleniyor…</p> : items.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-line p-8 text-center text-zinc-400">
+      {error && <p role="alert" className="notice-error">{error}</p>}
+      {!items ? <p className="muted">Yükleniyor…</p> : items.length === 0 ? (
+        <p className="card p-8 text-center muted">
           {filtered ? 'Aramana uyan abonelik yok.' : 'Liste boş. İlk aboneliğini ekle 👆'}
         </p>
       ) : (
         <>
           <ul className="space-y-2">
-            {items.map(s => (
-              <li key={s.id} className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-panel px-4 py-3">
-                <div className={`min-w-0 ${s.active ? '' : 'opacity-50'}`}>
-                  <p className="truncate font-semibold">{s.name} {!s.active && <span className="text-xs text-zinc-500">(durduruldu)</span>}</p>
-                  <p className="text-xs text-zinc-400">{categoryLabels[s.category]} · {periodLabels[s.billingPeriod]} · {dayLabel(s.nextBillingDate)}</p>
+            {items.map((s, i) => (
+              <li key={s.id} className="card card-hover rise flex items-center justify-between gap-3 !rounded-2xl px-4 py-3" style={{ ['--d' as string]: `${Math.min(i, 10) * 0.04}s` }}>
+                <div className={`flex min-w-0 items-center gap-3 ${s.active ? '' : 'opacity-50 grayscale'}`}>
+                  <ServiceIcon name={s.name} category={s.category} />
+                  <div className="min-w-0">
+                    <p className="truncate font-extrabold">{s.name} {!s.active && <span className="text-xs font-semibold muted">(durduruldu)</span>}</p>
+                    <p className="text-xs muted">{categoryLabels[s.category]} · {periodLabels[s.billingPeriod]} · {dayLabel(s.nextBillingDate)}</p>
+                  </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-3">
-                  <p className={`font-bold ${s.active ? '' : 'opacity-50'}`}>{money(s.price, s.currency)}</p>
+                  <p className={`font-extrabold ${s.active ? '' : 'opacity-50'}`}>{money(s.price, s.currency)}</p>
                   <button aria-label={s.active ? `${s.name} aboneliğini durdur` : `${s.name} aboneliğini sürdür`}
-                    title={s.active ? 'Durdur' : 'Sürdür'} onClick={() => toggleActive(s)} className="text-zinc-400 hover:text-white">
+                    title={s.active ? 'Durdur' : 'Sürdür'} onClick={() => toggleActive(s)} className="rounded-full p-1 transition hover:scale-125 hover:bg-violet/30">
                     {s.active ? '⏸️' : '▶️'}
                   </button>
-                  <button aria-label={`${s.name} aboneliğini düzenle`} onClick={() => setEditing({ id: s.id, data: toInput(s) })} className="text-zinc-400 hover:text-white">✏️</button>
-                  <button aria-label={`${s.name} aboneliğini sil`} onClick={() => setDeleting(s)} className="text-zinc-400 hover:text-pink">🗑️</button>
+                  <button aria-label={`${s.name} aboneliğini düzenle`} onClick={() => setEditing({ id: s.id, data: toInput(s) })} className="rounded-full p-1 transition hover:scale-125 hover:bg-violet/30">✏️</button>
+                  <button aria-label={`${s.name} aboneliğini sil`} onClick={() => setDeleting(s)} className="rounded-full p-1 transition hover:scale-125 hover:bg-pink/40">🗑️</button>
                 </div>
               </li>
             ))}
           </ul>
-          <div className="flex items-center justify-between text-sm text-zinc-500">
+          <div className="flex items-center justify-between text-sm muted">
             <span>{items.length} / {total} abonelik</span>
             {items.length < total && (
-              <button onClick={loadMore} disabled={loadingMore} className="rounded-full border border-line px-4 py-2 font-semibold text-zinc-200 hover:border-zinc-500 disabled:opacity-60">
+              <button onClick={loadMore} disabled={loadingMore} className="btn btn-ghost !py-2">
                 {loadingMore ? 'Yükleniyor…' : 'Daha fazla göster'}
               </button>
             )}
@@ -178,12 +182,12 @@ function Editor({ state, onClose, onSaved }: {
     } finally { setBusy(false) }
   }
 
-  const err = (k: string) => fields[k] && <p className="mt-1 text-xs text-pink">{fields[k]}</p>
+  const err = (k: string) => fields[k] && <p className="mt-1 text-xs text-pink-deep">{fields[k]}</p>
 
   return (
-    <div className="fixed inset-0 z-30 grid place-items-end bg-black/70 sm:place-items-center" onClick={onClose}>
+    <div className="fixed inset-0 z-30 grid place-items-end bg-ink/40 backdrop-blur-sm sm:place-items-center" onClick={onClose}>
       <form onSubmit={submit} onClick={e => e.stopPropagation()}
-        className="max-h-[92vh] w-full max-w-md space-y-3 overflow-y-auto rounded-t-3xl border border-line bg-panel p-6 sm:rounded-3xl">
+        className="card pop max-h-[92vh] w-full max-w-md space-y-3 overflow-y-auto !rounded-b-none bg-white p-6 sm:!rounded-3xl">
         <h2 className="text-xl font-extrabold">{state.id === null ? 'Yeni abonelik' : 'Aboneliği düzenle'}</h2>
         <div>
           <input className={field} placeholder="Ad (Netflix, Spotify…)" aria-label="Ad" value={d.name} onChange={e => set('name', e.target.value)} required maxLength={100} />
@@ -210,17 +214,17 @@ function Editor({ state, onClose, onSaved }: {
           </select>
         </div>
         <div>
-          <label htmlFor="next-date" className="mb-1 block text-xs text-zinc-400">Sonraki ödeme tarihi</label>
+          <label htmlFor="next-date" className="mb-1 block text-xs muted">Sonraki ödeme tarihi</label>
           <input id="next-date" className={field} type="date" value={d.nextBillingDate} onChange={e => set('nextBillingDate', e.target.value)} required />
           {err('nextBillingDate')}
         </div>
-        <label className="flex items-center gap-2 text-sm text-zinc-300">
-          <input type="checkbox" checked={d.active} onChange={e => set('active', e.target.checked)} className="size-4 accent-lime" /> Aktif
+        <label className="flex items-center gap-2 text-sm font-semibold">
+          <input type="checkbox" checked={d.active} onChange={e => set('active', e.target.checked)} className="size-4 accent-violet-deep" /> Aktif
         </label>
-        {error && <p role="alert" className="rounded-xl bg-pink/10 px-3 py-2 text-sm text-pink">{error}</p>}
+        {error && <p role="alert" className="notice-error text-sm">{error}</p>}
         <div className="flex gap-3 pt-1">
-          <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-line py-3 font-semibold">Vazgeç</button>
-          <button disabled={busy} className="flex-1 rounded-xl bg-lime py-3 font-bold text-ink disabled:opacity-60">{busy ? 'Kaydediliyor…' : 'Kaydet'}</button>
+          <button type="button" onClick={onClose} className="btn btn-ghost flex-1">Vazgeç</button>
+          <button disabled={busy} className="btn btn-primary flex-1">{busy ? 'Kaydediliyor…' : 'Kaydet'}</button>
         </div>
       </form>
     </div>

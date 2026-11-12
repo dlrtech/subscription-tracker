@@ -29,13 +29,13 @@ export default function ResetPassword() {
       <form onSubmit={submit} className={cardClass}>
         <h1 className="text-2xl font-extrabold">Yeni şifre belirle 🔐</h1>
         {!token ? (
-          <p role="alert" className="rounded-xl bg-pink/10 px-3 py-2 text-sm text-pink">
+          <p role="alert" className="notice-error text-sm">
             Bağlantı eksik. E-postandaki bağlantıya tekrar tıkla ya da <Link className="underline" to="/sifremi-unuttum">yeni bir bağlantı iste</Link>.
           </p>
         ) : done ? (
           <>
-            <p role="status" className="rounded-xl bg-lime/10 px-3 py-3 text-sm text-lime">Şifren değişti. Artık yeni şifrenle giriş yapabilirsin.</p>
-            <Link to="/giris" className="block w-full rounded-xl bg-lime py-3 text-center font-bold text-ink">Giriş yap</Link>
+            <p role="status" className="notice-ok text-sm">Şifren değişti. Artık yeni şifrenle giriş yapabilirsin.</p>
+            <Link to="/giris" className="btn btn-primary w-full">Giriş yap</Link>
           </>
         ) : (
           <>
@@ -43,8 +43,8 @@ export default function ResetPassword() {
               onChange={e => setPassword(e.target.value)} required minLength={8} maxLength={72} autoComplete="new-password" />
             <input className={inputClass} type="password" placeholder="Yeni şifre (tekrar)" aria-label="Yeni şifre (tekrar)" value={again}
               onChange={e => setAgain(e.target.value)} required minLength={8} maxLength={72} autoComplete="new-password" />
-            {error && <p role="alert" className="rounded-xl bg-pink/10 px-3 py-2 text-sm text-pink">{error}</p>}
-            <button disabled={busy} className="w-full rounded-xl bg-lime py-3 font-bold text-ink disabled:opacity-60">
+            {error && <p role="alert" className="notice-error text-sm">{error}</p>}
+            <button disabled={busy} className="btn btn-primary w-full">
               {busy ? 'Kaydediliyor…' : 'Şifreyi değiştir'}
             </button>
           </>

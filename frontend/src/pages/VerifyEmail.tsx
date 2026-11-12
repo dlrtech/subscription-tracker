@@ -29,22 +29,22 @@ export default function VerifyEmail() {
     <AuthShell>
       <div className={cardClass}>
         <h1 className="text-2xl font-extrabold">E-posta doğrulama</h1>
-        {state === 'working' && <p className="text-zinc-400">Doğrulanıyor…</p>}
+        {state === 'working' && <p className="muted">Doğrulanıyor…</p>}
         {state === 'ok' && (
           <>
-            <p role="status" className="rounded-xl bg-lime/10 px-3 py-3 text-sm text-lime">E-postan doğrulandı ✅ Artık ödeme hatırlatmalarını alabilirsin.</p>
-            <Link to={user ? '/app' : '/giris'} className="block w-full rounded-xl bg-lime py-3 text-center font-bold text-ink">
+            <p role="status" className="notice-ok text-sm">E-postan doğrulandı ✅ Artık ödeme hatırlatmalarını alabilirsin.</p>
+            <Link to={user ? '/app' : '/giris'} className="btn btn-primary w-full">
               {user ? 'Uygulamaya git' : 'Giriş yap'}
             </Link>
           </>
         )}
         {state === 'failed' && (
           <>
-            <p role="alert" className="rounded-xl bg-pink/10 px-3 py-2 text-sm text-pink">
+            <p role="alert" className="notice-error text-sm">
               Bu bağlantı geçersiz, süresi dolmuş ya da daha önce kullanılmış.
             </p>
-            <p className="text-sm text-zinc-400">Giriş yapıp Profil sayfasından yeni bir doğrulama e-postası isteyebilirsin.</p>
-            <Link to={user ? '/app/profil' : '/giris'} className="block w-full rounded-xl border border-line py-3 text-center font-semibold">
+            <p className="text-sm muted">Giriş yapıp Profil sayfasından yeni bir doğrulama e-postası isteyebilirsin.</p>
+            <Link to={user ? '/app/profil' : '/giris'} className="btn btn-ghost w-full">
               {user ? 'Profile git' : 'Giriş yap'}
             </Link>
           </>

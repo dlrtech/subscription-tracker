@@ -37,34 +37,34 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
     <AuthShell>
       <form onSubmit={submit} className={cardClass}>
         <h1 className="text-2xl font-extrabold">{isRegister ? 'Hadi başlayalım 🚀' : 'Tekrar hoş geldin 👋'}</h1>
-        <p className="text-sm text-zinc-400">{isRegister ? 'Dakikalar içinde abonelik kaosunu bitir.' : 'Aboneliklerin seni bekliyor.'}</p>
+        <p className="text-sm muted">{isRegister ? 'Dakikalar içinde abonelik kaosunu bitir.' : 'Aboneliklerin seni bekliyor.'}</p>
 
         {isRegister && (
           <div>
             <input className={input} placeholder="Adın" aria-label="Adın" value={name} onChange={e => setName(e.target.value)} required maxLength={100} autoComplete="name" />
-            {fields.name && <p className="mt-1 text-xs text-pink">{fields.name}</p>}
+            {fields.name && <p className="mt-1 text-xs text-pink-deep">{fields.name}</p>}
           </div>
         )}
         <div>
           <input className={input} type="email" placeholder="E-posta" aria-label="E-posta" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="email" />
-          {fields.email && <p className="mt-1 text-xs text-pink">{fields.email}</p>}
+          {fields.email && <p className="mt-1 text-xs text-pink-deep">{fields.email}</p>}
         </div>
         <div>
           <input className={input} type="password" placeholder={isRegister ? 'Şifre (en az 8 karakter)' : 'Şifre'} aria-label="Şifre" value={password}
             onChange={e => setPassword(e.target.value)} required minLength={isRegister ? 8 : 1} maxLength={72}
             autoComplete={isRegister ? 'new-password' : 'current-password'} />
-          {fields.password && <p className="mt-1 text-xs text-pink">{fields.password}</p>}
-          {!isRegister && <Link to="/sifremi-unuttum" className="mt-2 inline-block text-xs text-zinc-400 underline hover:text-white">Şifremi unuttum</Link>}
+          {fields.password && <p className="mt-1 text-xs text-pink-deep">{fields.password}</p>}
+          {!isRegister && <Link to="/sifremi-unuttum" className="mt-2 inline-block text-xs muted underline hover:text-ink">Şifremi unuttum</Link>}
         </div>
 
-        {error && <p role="alert" className="rounded-xl bg-pink/10 px-3 py-2 text-sm text-pink">{error}</p>}
+        {error && <p role="alert" className="notice-error text-sm">{error}</p>}
 
-        <button disabled={busy} className="w-full rounded-xl bg-lime py-3 font-bold text-ink transition hover:brightness-110 disabled:opacity-60">
+        <button disabled={busy} className="btn btn-primary w-full">
           {busy ? 'Bir saniye…' : isRegister ? 'Hesap oluştur' : 'Giriş yap'}
         </button>
-        <p className="text-center text-sm text-zinc-400">
+        <p className="text-center text-sm muted">
           {isRegister ? 'Zaten hesabın var mı? ' : 'Hesabın yok mu? '}
-          <Link className="font-semibold text-white underline" to={isRegister ? '/giris' : '/kayit'}>{isRegister ? 'Giriş yap' : 'Kayıt ol'}</Link>
+          <Link className="font-semibold text-violet-deep underline" to={isRegister ? '/giris' : '/kayit'}>{isRegister ? 'Giriş yap' : 'Kayıt ol'}</Link>
         </p>
       </form>
     </AuthShell>

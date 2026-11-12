@@ -4,7 +4,7 @@ import { api } from '../api'
 import { useAuth } from '../auth'
 import ConfirmDialog from '../components/ConfirmDialog'
 
-const field = 'w-full rounded-xl border border-line bg-ink px-4 py-3 text-white outline-none focus:border-violet'
+const field = 'input'
 
 export default function Profile() {
   const { user, setUser, signOut } = useAuth()
@@ -43,49 +43,49 @@ export default function Profile() {
   return (
     <div className="mx-auto max-w-md space-y-5">
       <h1 className="text-2xl font-extrabold">Profil</h1>
-      <p className="text-sm text-zinc-400">
+      <p className="text-sm muted">
         {user?.email}{' '}
         {user?.emailVerified
-          ? <span className="text-lime">✓ doğrulandı</span>
-          : <button onClick={resend} className="ml-1 underline hover:text-white">Doğrulama e-postasını tekrar gönder</button>}
+          ? <span className="font-bold text-mint-deep">✓ doğrulandı</span>
+          : <button onClick={resend} className="ml-1 font-bold text-violet-deep underline">Doğrulama e-postasını tekrar gönder</button>}
       </p>
-      {msg && <p role="status" className={`rounded-xl px-3 py-2 text-sm ${msg.ok ? 'bg-lime/10 text-lime' : 'bg-pink/10 text-pink'}`}>{msg.text}</p>}
+      {msg && <p role="status" className={`text-sm ${msg.ok ? 'notice-ok' : 'notice-error'}`}>{msg.text}</p>}
 
-      <form onSubmit={saveName} className="space-y-3 rounded-3xl border border-line bg-panel p-5">
-        <h2 className="font-bold">İsim</h2>
+      <form onSubmit={saveName} className="card rise space-y-3 p-5">
+        <h2 className="font-extrabold">İsim</h2>
         <input className={field} aria-label="İsim" value={name} onChange={e => setName(e.target.value)} required maxLength={100} />
-        <button className="rounded-xl bg-white px-5 py-2.5 font-bold text-ink">Kaydet</button>
+        <button className="btn btn-dark">Kaydet</button>
       </form>
 
-      <form onSubmit={saveReminders} className="space-y-3 rounded-3xl border border-line bg-panel p-5">
-        <h2 className="font-bold">⏰ Ödeme hatırlatmaları</h2>
-        <label className="flex items-center gap-2 text-sm text-zinc-300">
-          <input type="checkbox" checked={remind} onChange={e => setRemind(e.target.checked)} className="size-4 accent-lime" />
+      <form onSubmit={saveReminders} className="card rise space-y-3 p-5">
+        <h2 className="font-extrabold">⏰ Ödeme hatırlatmaları</h2>
+        <label className="flex items-center gap-2 text-sm font-semibold">
+          <input type="checkbox" checked={remind} onChange={e => setRemind(e.target.checked)} className="size-4 accent-violet-deep" />
           Yaklaşan ödemeler için e-posta gönder
         </label>
-        <label className="flex items-center gap-2 text-sm text-zinc-300">
+        <label className="flex items-center gap-2 text-sm font-semibold">
           Ödemeden
-          <select className="rounded-xl border border-line bg-ink px-3 py-2 disabled:opacity-50" aria-label="Kaç gün önce" disabled={!remind}
+          <select className="input !w-auto !py-2 disabled:opacity-50" aria-label="Kaç gün önce" disabled={!remind}
             value={days} onChange={e => setDays(Number(e.target.value))}>
             {Array.from({ length: 14 }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
           </select>
           gün önce
         </label>
-        {!user?.emailVerified && <p className="text-xs text-zinc-500">Hatırlatma almak için önce e-postanı doğrulaman gerekiyor.</p>}
-        <button className="rounded-xl bg-white px-5 py-2.5 font-bold text-ink">Kaydet</button>
+        {!user?.emailVerified && <p className="text-xs muted">Hatırlatma almak için önce e-postanı doğrulaman gerekiyor.</p>}
+        <button className="btn btn-dark">Kaydet</button>
       </form>
 
-      <form onSubmit={savePw} className="space-y-3 rounded-3xl border border-line bg-panel p-5">
-        <h2 className="font-bold">Şifre değiştir</h2>
+      <form onSubmit={savePw} className="card rise space-y-3 p-5">
+        <h2 className="font-extrabold">Şifre değiştir</h2>
         <input className={field} type="password" placeholder="Mevcut şifre" aria-label="Mevcut şifre" value={cur} onChange={e => setCur(e.target.value)} required autoComplete="current-password" />
         <input className={field} type="password" placeholder="Yeni şifre (en az 8)" aria-label="Yeni şifre" value={next} onChange={e => setNext(e.target.value)} required minLength={8} maxLength={72} autoComplete="new-password" />
-        <button className="rounded-xl bg-white px-5 py-2.5 font-bold text-ink">Güncelle</button>
+        <button className="btn btn-dark">Güncelle</button>
       </form>
 
-      <div className="rounded-3xl border border-pink/40 p-5">
-        <h2 className="font-bold text-pink">Tehlikeli bölge</h2>
-        <p className="mb-3 text-sm text-zinc-400">Hesabını silersen geri dönüş yok.</p>
-        <button onClick={() => setConfirmDelete(true)} className="rounded-xl border border-pink px-5 py-2.5 font-bold text-pink hover:bg-pink hover:text-white">Hesabı sil</button>
+      <div className="card rise !border-pink-deep/40 p-5">
+        <h2 className="font-extrabold text-pink-deep">Tehlikeli bölge</h2>
+        <p className="mb-3 text-sm muted">Hesabını silersen geri dönüş yok.</p>
+        <button onClick={() => setConfirmDelete(true)} className="btn btn-danger">Hesabı sil</button>
       </div>
 
       {confirmDelete && (

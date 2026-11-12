@@ -24,7 +24,7 @@ vi.mock('../api', async importOriginal => {
 })
 import { api } from '../api'
 
-const user = { id: 1, email: 'a@b.com', name: 'Ada', emailVerified: false, remindersEnabled: true, reminderDays: 3, createdAt: '' }
+const user = { id: 1, email: 'a@b.com', name: 'Ada', emailVerified: false, remindersEnabled: true, reminderDays: 3, preferredCurrency: 'TRY', createdAt: '' }
 const session = { accessToken: 't', tokenType: 'Bearer', expiresIn: 900, user }
 
 const renderAt = (path: string, ui: React.ReactNode, routePath = path.split('?')[0]) =>

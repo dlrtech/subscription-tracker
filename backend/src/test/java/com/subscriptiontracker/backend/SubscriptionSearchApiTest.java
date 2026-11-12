@@ -104,6 +104,8 @@ class SubscriptionSearchApiTest extends ApiTestSupport {
                 .andExpect(jsonPath("$.currency").value("TRY"))
                 .andExpect(jsonPath("$.monthlyTotal").value(500.0))
                 .andExpect(jsonPath("$.yearlyTotal").value(6000.0))
+                // Subscriptions were created without a category, so they land in OTHER; amounts are converted too.
+                .andExpect(jsonPath("$.monthlyByCategory.OTHER").value(500.0))
                 .andExpect(jsonPath("$.unconvertedCurrencies[0]").value("XYZ"))
                 .andExpect(jsonPath("$.ratesDate").value("2026-11-12"));
     }

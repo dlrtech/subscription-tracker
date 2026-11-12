@@ -8,6 +8,7 @@ export interface User {
   emailVerified: boolean
   remindersEnabled: boolean
   reminderDays: number
+  preferredCurrency: string
   createdAt: string
 }
 export interface AuthResponse { accessToken: string; tokenType: string; expiresIn: number; user: User }
@@ -42,6 +43,7 @@ export interface TotalSpending {
   currency: string
   monthlyTotal: number
   yearlyTotal: number
+  monthlyByCategory: Partial<Record<Category, number>>
   unconvertedCurrencies: string[]
   ratesDate: string | null
 }
@@ -178,7 +180,7 @@ export const api = {
     request<void>('/api/auth/verify-email', { method: 'POST', body: json({ token }) }, false),
   resendVerification: () => request<void>('/api/users/me/resend-verification', { method: 'POST' }),
   me: () => request<User>('/api/users/me'),
-  updateProfile: (p: { name?: string; remindersEnabled?: boolean; reminderDays?: number }) =>
+  updateProfile: (p: { name?: string; remindersEnabled?: boolean; reminderDays?: number; preferredCurrency?: string }) =>
     request<User>('/api/users/me', { method: 'PUT', body: json(p) }),
   changePassword: (currentPassword: string, newPassword: string) =>
     request<void>('/api/users/me/password', { method: 'PUT', body: json({ currentPassword, newPassword }) }),

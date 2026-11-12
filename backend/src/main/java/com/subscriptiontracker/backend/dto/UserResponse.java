@@ -11,10 +11,11 @@ public record UserResponse(
         boolean emailVerified,
         boolean remindersEnabled,
         int reminderDays,
+        String preferredCurrency,
         Instant createdAt) {
 
     public static UserResponse from(User user) {
         return new UserResponse(user.getId(), user.getEmail(), user.getName(), user.isEmailVerified(),
-                user.isRemindersEnabled(), user.getReminderDays(), user.getCreatedAt());
+                user.isRemindersEnabled(), user.getReminderDays(), user.getPreferredCurrency(), user.getCreatedAt());
     }
 }

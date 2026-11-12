@@ -4,14 +4,17 @@ import { Link } from 'react-router-dom'
 /** Centered card with the logo, shared by the sign-in, registration and password pages. */
 export default function AuthShell({ children }: { children: ReactNode }) {
   return (
-    <div className="glow grid min-h-screen place-items-center px-4">
+    <div className="grid min-h-screen place-items-center px-4 py-10">
       <div className="w-full max-w-md">
-        <Link to="/" className="mb-6 block text-center text-2xl font-extrabold">sub<span className="gradient-text">tracker</span></Link>
-        {children}
+        <Link to="/" className="pop mb-6 flex items-center justify-center gap-2 text-2xl font-extrabold">
+          <span aria-hidden="true" className="grid size-10 place-items-center rounded-2xl bg-gradient-to-br from-violet to-pink text-xl shadow-md">💸</span>
+          <span>sub<span className="gradient-text">tracker</span></span>
+        </Link>
+        <div className="rise">{children}</div>
       </div>
     </div>
   )
 }
 
-export const inputClass = 'w-full rounded-xl border border-line bg-ink px-4 py-3 text-white placeholder-zinc-500 outline-none focus:border-violet'
-export const cardClass = 'space-y-4 rounded-3xl border border-line bg-panel p-6 shadow-2xl sm:p-8'
+export const inputClass = 'input'
+export const cardClass = 'card space-y-4 p-6 sm:p-8'
