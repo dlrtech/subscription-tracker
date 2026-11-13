@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth'
 import Icon, { type IconName } from '../components/Icon'
+import Credit from '../components/Credit'
 import Logo from '../components/Logo'
 import Mascot, { type MascotColor, type Mood } from '../components/Mascot'
 
@@ -179,6 +180,7 @@ export default function Landing() {
 
       <footer className="border-t border-line py-8 text-center text-sm muted">
         © {year} subtracker · Gençler için, abonelik sürprizlerine karşı. · <Link to="/gizlilik" className="inline-flex min-h-11 items-center font-semibold underline">Gizlilik</Link>
+        <Credit className="mt-1" />
       </footer>
     </div>
   )

@@ -179,6 +179,14 @@ describe('routing', () => {
     expect(screen.queryByRole('link', { name: 'gizlilik metnini' })).not.toBeInTheDocument()
   })
 
+  it('signs the pages with the maker credit', () => {
+    for (const path of ['/', '/gizlilik']) {
+      const { unmount } = render(<MemoryRouter initialEntries={[path]}><AuthProvider><App /></AuthProvider></MemoryRouter>)
+      expect(screen.getByText('dlrtech tarafından yapıldı')).toBeInTheDocument()
+      unmount()
+    }
+  })
+
   it('NotFound links back home', () => {
     render(<MemoryRouter><NotFound /></MemoryRouter>)
     expect(screen.getByRole('link', { name: 'Ana sayfaya dön' })).toHaveAttribute('href', '/')

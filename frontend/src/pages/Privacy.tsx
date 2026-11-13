@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import Credit from '../components/Credit'
 import Logo from '../components/Logo'
 
 // Optional: set VITE_CONTACT_EMAIL at build time to show a contact address on this page.
@@ -105,6 +106,7 @@ export default function Privacy() {
           <Link to="/" className="font-bold text-violet-deep underline">Ana sayfaya dön</Link>
         </p>
       </article>
+      <Credit className="mt-6" />
     </div>
   )
 }

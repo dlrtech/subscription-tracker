@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { useAuth } from '../auth'
+import Credit from './Credit'
 import Icon, { type IconName } from './Icon'
 import Logo from './Logo'
 
@@ -61,6 +62,7 @@ export default function AppLayout() {
       {user && !user.emailVerified && <VerifyBanner />}
 
       <main className="mx-auto max-w-5xl px-4 py-6"><Outlet /></main>
+      <footer className="mx-auto max-w-5xl px-4 pb-6"><Credit /></footer>
 
       <nav aria-label="Alt menü" className="fixed inset-x-3 bottom-3 z-20 grid grid-cols-3 rounded-3xl border-[1.5px] border-line bg-white shadow-xl md:hidden">
         {tabs.map(t => (
