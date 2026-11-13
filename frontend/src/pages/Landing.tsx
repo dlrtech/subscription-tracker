@@ -178,7 +178,7 @@ export default function Landing() {
       </section>
 
       <footer className="border-t border-line py-8 text-center text-sm muted">
-        © {year} subtracker · Gençler için, abonelik sürprizlerine karşı.
+        © {year} subtracker · Gençler için, abonelik sürprizlerine karşı. · <Link to="/gizlilik" className="inline-flex min-h-11 items-center font-semibold underline">Gizlilik</Link>
       </footer>
     </div>
   )

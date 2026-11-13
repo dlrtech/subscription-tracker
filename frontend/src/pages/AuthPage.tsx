@@ -76,6 +76,11 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
         <button disabled={busy} className="btn btn-primary w-full">
           {busy ? 'Bir saniye…' : isRegister ? 'Hesap oluştur' : 'Giriş yap'}
         </button>
+        {isRegister && (
+          <p className="text-center text-xs muted">
+            Hesap oluşturarak <Link to="/gizlilik" className="font-semibold underline">gizlilik metnini</Link> okuduğunu kabul edersin.
+          </p>
+        )}
         <p className="text-center text-sm muted">
           {isRegister ? 'Zaten hesabın var mı? ' : 'Hesabın yok mu? '}
           <Link className="font-semibold text-violet-deep underline" to={isRegister ? '/giris' : '/kayit'}>{isRegister ? 'Giriş yap' : 'Kayıt ol'}</Link>

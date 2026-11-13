@@ -164,6 +164,21 @@ describe('routing', () => {
     expect(screen.getByRole('heading', { name: 'Sayfa bulunamadı' })).toBeInTheDocument()
   })
 
+  it('serves the privacy page, including how to delete the account', () => {
+    render(<MemoryRouter initialEntries={['/gizlilik']}><AuthProvider><App /></AuthProvider></MemoryRouter>)
+    expect(screen.getByRole('heading', { name: 'Gizlilik Metni' })).toBeInTheDocument()
+    expect(screen.getByText(/Hesabı sil/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Verilerini kimler işliyor?' })).toBeInTheDocument()
+  })
+
+  it('links the privacy page from the sign-up form but not from the login form', () => {
+    const { unmount } = renderAt('/kayit', <AuthPage mode="register" />)
+    expect(screen.getByRole('link', { name: 'gizlilik metnini' })).toHaveAttribute('href', '/gizlilik')
+    unmount()
+    renderAt('/giris', <AuthPage mode="login" />)
+    expect(screen.queryByRole('link', { name: 'gizlilik metnini' })).not.toBeInTheDocument()
+  })
+
   it('NotFound links back home', () => {
     render(<MemoryRouter><NotFound /></MemoryRouter>)
     expect(screen.getByRole('link', { name: 'Ana sayfaya dön' })).toHaveAttribute('href', '/')

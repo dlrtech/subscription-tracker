@@ -8,6 +8,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import VerifyEmail from './pages/VerifyEmail'
 import NotFound from './pages/NotFound'
+import Privacy from './pages/Privacy'
 import Dashboard from './pages/Dashboard'
 import Subscriptions from './pages/Subscriptions'
 import Profile from './pages/Profile'
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/sifremi-unuttum" element={<ForgotPassword />} />
           <Route path="/sifre-sifirla" element={<ResetPassword />} />
           <Route path="/dogrula" element={<VerifyEmail />} />
+          <Route path="/gizlilik" element={<Privacy />} />
           <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route path="/app" element={<Dashboard />} />
             <Route path="/app/abonelikler" element={<Subscriptions />} />
