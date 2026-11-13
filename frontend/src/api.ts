@@ -97,6 +97,11 @@ export class ApiError extends Error {
 let onUnauthorized: () => void = () => {}
 export const setUnauthorizedHandler = (fn: () => void) => { onUnauthorized = fn }
 
+/** Fire-and-forget request that wakes a sleeping API; no custom headers, so no CORS preflight is needed. */
+export function wakeServer(): void {
+  fetch(`${BASE}/actuator/health`, { mode: 'no-cors', cache: 'no-store' }).catch(() => undefined)
+}
+
 async function send(path: string, init: RequestInit, auth: boolean): Promise<Response> {
   const headers: Record<string, string> = { Accept: 'application/json', 'X-Requested-With': 'subtracker' }
   if (init.body) headers['Content-Type'] = 'application/json'

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -66,6 +66,22 @@ describe('login', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('E-posta ya da şifre yanlış.')
     expect(screen.getByRole('link', { name: 'Şifremi unuttum' })).toHaveAttribute('href', '/sifremi-unuttum')
+  })
+
+  it('tells the visitor the server is waking up when the request takes long', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    try {
+      vi.mocked(api.register).mockReturnValue(new Promise(() => {}))
+      renderAt('/kayit', <AuthPage mode="register" />)
+      await userEvent.type(screen.getByLabelText('Adın'), 'Ada')
+      await userEvent.type(screen.getByLabelText('E-posta'), 'a@b.com')
+      await userEvent.type(screen.getByLabelText('Şifre'), 'secret-pass')
+      await userEvent.click(screen.getByRole('button', { name: 'Hesap oluştur' }))
+      expect(screen.queryByRole('status')).not.toBeInTheDocument()
+
+      await act(async () => { await vi.advanceTimersByTimeAsync(4100) })
+      expect(screen.getByRole('status')).toHaveTextContent('Sunucu uyanıyor')
+    } finally { vi.useRealTimers() }
   })
 
   it('does not show the forgot-password link on the sign-up form', () => {

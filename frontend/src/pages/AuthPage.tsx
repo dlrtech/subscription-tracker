@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { api, ApiError } from '../api'
 import { useAuth } from '../auth'
@@ -15,6 +15,14 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
   const [error, setError] = useState('')
   const [fields, setFields] = useState<Record<string, string>>({})
   const [busy, setBusy] = useState(false)
+  const [slow, setSlow] = useState(false)
+
+  // A sleeping free-tier server needs up to a minute or two to wake up: say so instead of leaving a silent spinner.
+  useEffect(() => {
+    if (!busy) { setSlow(false); return }
+    const t = setTimeout(() => setSlow(true), 4000)
+    return () => clearTimeout(t)
+  }, [busy])
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
@@ -58,6 +66,11 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
         </div>
 
         {error && <p role="alert" className="notice-error text-sm">{error}</p>}
+        {slow && (
+          <p role="status" className="notice-ok text-sm">
+            ☕ Sunucu uyanıyor, ilk istek 1-2 dakika sürebilir. Sayfayı kapatma, işlem kendiliğinden tamamlanacak.
+          </p>
+        )}
 
         <button disabled={busy} className="btn btn-primary w-full">
           {busy ? 'Bir saniye…' : isRegister ? 'Hesap oluştur' : 'Giriş yap'}
