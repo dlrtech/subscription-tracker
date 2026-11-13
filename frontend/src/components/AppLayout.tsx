@@ -39,7 +39,7 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen pb-24 md:pb-0">
-      <header className="sticky top-0 z-20 border-b border-line bg-white/75 backdrop-blur-xl">
+      <header className="sticky top-0 z-20 border-b border-line bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <NavLink to="/app" aria-label="subtracker ana sayfa" className="text-lg"><Logo /></NavLink>
           <nav aria-label="Ana menü" className="hidden gap-1 md:flex">
@@ -62,7 +62,7 @@ export default function AppLayout() {
 
       <main className="mx-auto max-w-5xl px-4 py-6"><Outlet /></main>
 
-      <nav aria-label="Alt menü" className="fixed inset-x-3 bottom-3 z-20 grid grid-cols-3 rounded-3xl border border-line bg-white/90 shadow-xl backdrop-blur-xl md:hidden">
+      <nav aria-label="Alt menü" className="fixed inset-x-3 bottom-3 z-20 grid grid-cols-3 rounded-3xl border-[1.5px] border-line bg-white shadow-xl md:hidden">
         {tabs.map(t => (
           <NavLink key={t.to} to={t.to} end={t.end}
             className={({ isActive }) => `flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-3xl py-2 text-xs font-bold transition ${isActive ? 'bg-violet/40 text-ink' : 'muted'}`}>

@@ -24,7 +24,7 @@ export default function Advisor({ advice, currency, budget, onBudgetChange }: Pr
   const clear = () => { setDraft(''); onBudgetChange(null); setTip(0) }
 
   return (
-    <section className="card rise p-5" aria-label="Pırıl'ın yorumu" style={{ ['--d' as string]: '0.05s' }}>
+    <section className="rise rounded-[1.75rem] bg-[#2f2a6b] p-5 text-white shadow-lg" aria-label="Pırıl'ın yorumu" style={{ ['--d' as string]: '0.05s' }}>
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
         <button type="button" onClick={() => setTip(t => t + 1)} disabled={advice.lines.length < 2}
           aria-label="Pırıl'a dokun, başka bir ipucu göster" title="Dokun, başka bir ipucu söylesin"
@@ -35,17 +35,17 @@ export default function Advisor({ advice, currency, budget, onBudgetChange }: Pr
           </span>
         </button>
         <div className="min-w-0 flex-1 space-y-3">
-          <div key={`${advice.mood}-${tip}`} role="status" aria-live="polite" className="bubble bubble-in text-sm font-semibold sm:text-base">
+          <div key={`${advice.mood}-${tip}`} role="status" aria-live="polite" className="bubble bubble-in text-sm font-semibold text-ink sm:text-base">
             {line}
-            {advice.lines.length > 1 && <span className="mt-1 block text-xs font-bold muted">İpucu {(tip % advice.lines.length) + 1} / {advice.lines.length}. Pırıl'a dokunarak diğerlerini gör.</span>}
+            {advice.lines.length > 1 && <span className="mt-1 block text-xs font-bold text-ink/70">İpucu {(tip % advice.lines.length) + 1} / {advice.lines.length}. Pırıl'a dokunarak diğerlerini gör.</span>}
           </div>
           <form onSubmit={save} className="flex flex-wrap items-end gap-2">
-            <label className="min-w-40 flex-1 text-xs font-bold muted">
+            <label className="min-w-40 flex-1 text-xs font-bold text-white/90">
               Aylık bütçen ({currency})
-              <input className="input mt-1 !py-2 text-sm" type="number" inputMode="decimal" min="1" step="any"
+              <input className="input mt-1 !py-2 text-sm text-ink" type="number" inputMode="decimal" min="1" step="any"
                 placeholder="Örn. 1500" value={draft} onChange={e => setDraft(e.target.value)} />
             </label>
-            <button className="btn btn-dark !py-2 text-sm">Kaydet</button>
+            <button className="btn btn-primary !py-2 text-sm">Kaydet</button>
             {budget !== null && <button type="button" onClick={clear} className="btn btn-ghost !py-2 text-sm">Kaldır</button>}
           </form>
         </div>

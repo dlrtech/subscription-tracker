@@ -92,13 +92,13 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <section className="rise overflow-hidden rounded-[2rem] bg-gradient-to-br from-violet via-pink to-peach p-6 shadow-xl sm:p-8">
+      <section className="rise overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#4b34b8] to-[#7a3399] p-6 text-white shadow-xl sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <p className="text-sm font-extrabold">Aylık harcadığın</p>
           <label className="flex items-center gap-2 text-sm font-bold">
             <span className="hidden sm:inline">Toplamı şu birimde göster:</span>
             <select aria-label="Toplam para birimi" value={target} onChange={e => void choose(e.target.value)}
-              className="rounded-full border-0 bg-white/80 px-3 py-1.5 font-extrabold shadow-sm outline-none focus:ring-4 focus:ring-white/60">
+              className="min-h-11 rounded-full border-0 bg-white px-3 py-1.5 font-extrabold text-ink shadow-sm outline-none focus:ring-4 focus:ring-white/60">
               {options.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </label>
@@ -112,11 +112,11 @@ export default function Dashboard() {
             <div className="mt-2 grid items-end gap-4 sm:grid-cols-[1fr_auto]">
               <p className="text-5xl font-black tracking-tight sm:text-6xl">{money(total.monthlyTotal, total.currency)}</p>
               <div className="flex gap-3 text-sm font-bold">
-                <div className="rounded-2xl bg-white/70 px-4 py-2"><p className="text-xs opacity-70">Yıllık toplam</p><p className="text-lg font-extrabold">{money(total.yearlyTotal, total.currency)}</p></div>
-                <div className="rounded-2xl bg-white/70 px-4 py-2"><p className="text-xs opacity-70">Aktif abonelik</p><p className="text-lg font-extrabold">{activeCount}</p></div>
+                <div className="rounded-2xl bg-white/15 px-4 py-2 ring-1 ring-white/25"><p className="text-xs text-white/85">Yıllık toplam</p><p className="text-lg font-extrabold">{money(total.yearlyTotal, total.currency)}</p></div>
+                <div className="rounded-2xl bg-white/15 px-4 py-2 ring-1 ring-white/25"><p className="text-xs text-white/85">Aktif abonelik</p><p className="text-lg font-extrabold">{activeCount}</p></div>
               </div>
             </div>
-            <p className="mt-3 text-xs font-semibold opacity-80">
+            <p className="mt-3 text-xs font-semibold text-white/85">
               {total.ratesDate ? `Kurlar: ${new Date(total.ratesDate + 'T00:00:00').toLocaleDateString('tr-TR')} (Avrupa Merkez Bankası referans kurları). ` : ''}
               {total.unconvertedCurrencies.length > 0 && `Çevrilemeyen para birimleri toplama dahil değil: ${total.unconvertedCurrencies.join(', ')}.`}
             </p>

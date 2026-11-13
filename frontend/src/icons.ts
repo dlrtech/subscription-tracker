@@ -38,11 +38,3 @@ const byCategory: Record<Category, IconStyle> = {
 export function iconFor(name: string, category: Category): IconStyle {
   return known.find(([re]) => re.test(name))?.[1] ?? byCategory[category]
 }
-
-/** Icons floating in the page background. Decorative only. */
-export const floatingIcons: IconStyle[] = [
-  { icon: 'film', bg: 'bg-pink' }, { icon: 'headphones', bg: 'bg-mint' }, { icon: 'play', bg: 'bg-pink' },
-  { icon: 'cloud', bg: 'bg-sky' }, { icon: 'gamepad', bg: 'bg-violet' }, { icon: 'tv', bg: 'bg-lemon' },
-  { icon: 'dumbbell', bg: 'bg-peach' }, { icon: 'newspaper', bg: 'bg-lemon' }, { icon: 'bot', bg: 'bg-mint' },
-  { icon: 'laptop', bg: 'bg-sky' }, { icon: 'book', bg: 'bg-mint' }, { icon: 'palette', bg: 'bg-pink' },
-]

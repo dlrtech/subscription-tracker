@@ -55,7 +55,7 @@ export default function Landing() {
   return (
     <div className="overflow-x-hidden">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
-        <span className="text-xl"><Logo size="lg" animated /></span>
+        <span className="text-xl"><Logo size="lg" /></span>
         <div className="flex items-center gap-2 text-sm font-semibold">
           {!user && <Link to="/giris" className="inline-flex min-h-11 items-center rounded-full px-4 muted hover:text-ink">Giriş</Link>}
           <Link to={cta.to} className="btn btn-dark !py-2">{user ? 'Uygulama' : 'Kayıt ol'}</Link>
@@ -65,7 +65,7 @@ export default function Landing() {
       <section>
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 pb-20 pt-10 md:grid-cols-2 md:pt-20">
           <div>
-            <p className="pop mb-4 inline-flex items-center gap-1.5 rounded-full border border-line bg-white/80 px-3 py-1 text-xs font-bold text-violet-deep"><Icon name="sparkles" className="size-3.5" />Abonelik kaosuna son</p>
+            <p className="pop mb-4 inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1 text-xs font-bold text-violet-deep"><Icon name="sparkles" className="size-3.5" />Abonelik kaosuna son</p>
             <h1 className="rise text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl">
               Aylık kaç TL'yi <span className="gradient-text">abonelikle harcıyorsun?</span>
             </h1>
@@ -82,7 +82,7 @@ export default function Landing() {
           <div className="relative mx-auto h-[430px] w-full max-w-sm">
             {chips.map(c => (
               <span key={c.t} style={{ ['--r' as string]: c.r, ['--dur' as string]: c.dur }}
-                className={`floaty absolute z-10 ${c.pos} ${c.c} inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-extrabold shadow-lg`}>
+                className={`absolute z-10 ${c.pos} ${c.c} inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-extrabold shadow-lg`}>
                 <Icon name={c.i} className="size-4" />{c.t}
               </span>
             ))}
@@ -106,7 +106,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="border-y border-line bg-white/60 py-5 backdrop-blur">
+      <section className="border-y border-line bg-white py-5">
         <p className="mx-auto max-w-6xl px-5 text-center text-sm muted">
           Ortalama bir genç <b className="text-ink">5+ abonelik</b> kullanıyor ve çoğunun toplamını bilmiyor. Sen bileceksin.
         </p>
@@ -168,9 +168,9 @@ export default function Landing() {
       <section className="px-5 pb-20">
         <div className="mx-auto max-w-4xl rounded-[2rem] bg-gradient-to-br from-violet via-pink to-peach p-10 text-center shadow-xl sm:p-14">
           <div className="mb-4 flex items-end justify-center gap-2">
-            <Mascot mood="happy" color="mint" waving className="floaty size-20 [--dur:4s]" />
-            <Mascot mood="happy" color="lemon" className="floaty size-24 [--dur:5s] [--delay:-1s]" />
-            <Mascot mood="happy" color="sky" waving className="floaty size-20 [--dur:4.5s] [--delay:-2s]" />
+            <Mascot mood="happy" color="mint" className="size-20" />
+            <Mascot mood="happy" color="lemon" waving className="size-24" />
+            <Mascot mood="happy" color="sky" className="size-20" />
           </div>
           <h2 className="text-3xl font-black sm:text-5xl">Paranın nereye gittiğini öğrenmeye hazır mısın?</h2>
           <Link to={cta.to} className="btn btn-dark mt-8 !px-8 !py-4 text-lg">{cta.label}<Icon name="arrowRight" className="size-5" /></Link>
