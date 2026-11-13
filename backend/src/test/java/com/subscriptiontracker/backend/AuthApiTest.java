@@ -26,14 +26,14 @@ class AuthApiTest extends ApiTestSupport {
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"email":"  %s ","password":"%s","name":" Dilara "}
+                                {"email":"  %s ","password":"%s","name":" Ada "}
                                 """.formatted(email.toUpperCase(), PASSWORD)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.tokenType").value("Bearer"))
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
                 .andExpect(jsonPath("$.expiresIn").value(3600))
                 .andExpect(jsonPath("$.user.email").value(email))
-                .andExpect(jsonPath("$.user.name").value("Dilara"))
+                .andExpect(jsonPath("$.user.name").value("Ada"))
                 .andExpect(jsonPath("$.user.passwordHash").doesNotExist());
     }
 
