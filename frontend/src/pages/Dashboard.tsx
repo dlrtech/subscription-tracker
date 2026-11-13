@@ -92,7 +92,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <section className="rise overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#1b3f8f] to-[#0e6b86] p-6 text-white shadow-xl sm:p-8">
+      <section className="rise overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#004228] to-[#006a43] p-6 text-white shadow-xl sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <p className="text-sm font-extrabold">Aylık harcadığın</p>
           <label className="flex items-center gap-2 text-sm font-bold">
@@ -140,7 +140,7 @@ export default function Dashboard() {
                   <span className="muted">{money(v, total.currency)}</span>
                 </div>
                 <div className="h-3 overflow-hidden rounded-full bg-line">
-                  <div className="bar-grow h-full rounded-full bg-gradient-to-r from-violet-deep to-sky"
+                  <div className="bar-grow h-full rounded-full bg-gradient-to-r from-violet-deep to-mint"
                     style={{ width: `${(v / max) * 100}%`, ['--d' as string]: `${0.2 + i * 0.1}s` }} />
                 </div>
               </li>

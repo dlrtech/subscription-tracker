@@ -1,25 +1,25 @@
 @import "tailwindcss";
 
 /*
- * Calm, gender-neutral palette: navy ink, blue accent, teal/green and warm yellow highlights.
- * The token names "violet" and "pink" are historical; they now hold soft blue and soft amber, and the
+ * Brevo-inspired palette: brand green (#0b996e), deep greens, near-black ink and a warm cream page color.
+ * The token names "violet" and "pink" are historical: they now hold soft mint and soft sand, and the
  * "-deep" shades are for text/borders on light backgrounds (readable contrast). "pink-deep" is the error red.
  */
 @theme {
   --font-sans: "Nunito", "SF Pro Rounded", ui-rounded, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --color-paper: #eaf1f8;
+  --color-paper: #f7f1eb;
   --color-panel: #ffffff;
-  --color-line: #cfdbe8;
-  --color-ink: #16263d;
-  --color-violet: #bcd3ff;
-  --color-violet-deep: #1f55c9;
-  --color-pink: #ffd37a;
-  --color-pink-deep: #c2362b;
-  --color-mint: #a7e6cd;
-  --color-mint-deep: #14795a;
-  --color-sky: #a6d8f7;
-  --color-peach: #ffcfa0;
-  --color-lemon: #ffe985;
+  --color-line: #e3dccf;
+  --color-ink: #1b1b1b;
+  --color-violet: #cdeedd;
+  --color-violet-deep: #006a43;
+  --color-pink: #f4e0b5;
+  --color-pink-deep: #b3261e;
+  --color-mint: #bfe8d6;
+  --color-mint-deep: #006a43;
+  --color-sky: #bcdfff;
+  --color-peach: #f7d9bd;
+  --color-lemon: #f5ecb0;
 }
 
 html { scroll-behavior: smooth; }
@@ -110,7 +110,7 @@ body {
 .bar-grow { transform-origin: left; animation: bar 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0s) both; }
 
 .gradient-text {
-  background: linear-gradient(90deg, #1f55c9, #0b7f86);
+  background: linear-gradient(90deg, #006a43, #0b996e);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -123,10 +123,10 @@ body {
     background: #fff;
     border: 1.5px solid var(--color-line);
     border-radius: 1.75rem;
-    box-shadow: 0 6px 20px -10px rgb(22 38 61 / 0.22);
+    box-shadow: 0 6px 20px -10px rgb(27 27 27 / 0.22);
   }
   .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-  .card-hover:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -12px rgb(22 38 61 / 0.3); }
+  .card-hover:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -12px rgb(27 27 27 / 0.3); }
 
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
@@ -137,9 +137,9 @@ body {
   .btn:active:not(:disabled) { transform: scale(0.97); }
   .btn:disabled { opacity: 0.6; cursor: not-allowed; }
   .btn-primary {
-    background: var(--color-violet-deep);
+    background: #007a52;
     color: #fff;
-    box-shadow: 0 8px 20px -8px rgb(31 85 201 / 0.6);
+    box-shadow: 0 8px 20px -8px rgb(0 122 82 / 0.55);
   }
   .btn-accent { background: #ffd93b; color: var(--color-ink); box-shadow: 0 6px 16px -8px rgb(0 0 0 / 0.5); }
   .btn-dark { background: var(--color-ink); color: #fff; }
@@ -153,14 +153,14 @@ body {
     background: rgb(255 255 255 / 0.9); padding: 0.75rem 1rem; color: var(--color-ink); outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
-  .input::placeholder { color: rgb(22 38 61 / 0.68); }
-  .input:focus { border-color: var(--color-violet-deep); box-shadow: 0 0 0 4px rgb(31 85 201 / 0.25); }
+  .input::placeholder { color: rgb(27 27 27 / 0.68); }
+  .input:focus { border-color: var(--color-violet-deep); box-shadow: 0 0 0 4px rgb(11 153 110 / 0.3); }
 
   /* 0.74 of the ink color on white is about 6:1, above the 4.5:1 minimum for body text. */
-  .muted { color: rgb(22 38 61 / 0.74); }
+  .muted { color: rgb(27 27 27 / 0.74); }
   .bubble {
     position: relative; border: 1.5px solid var(--color-line); border-radius: 1.25rem; background: #fff;
-    padding: 0.8rem 1rem; box-shadow: 0 8px 24px -14px rgb(31 85 201 / 0.4);
+    padding: 0.8rem 1rem; box-shadow: 0 8px 24px -14px rgb(0 106 67 / 0.35);
   }
   /* Little tail pointing at the character on its left (sm and up) or above it (small screens). */
   .bubble::before {

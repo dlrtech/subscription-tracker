@@ -24,7 +24,7 @@ export default function Advisor({ advice, currency, budget, onBudgetChange }: Pr
   const clear = () => { setDraft(''); onBudgetChange(null); setTip(0) }
 
   return (
-    <section className="rise rounded-[1.75rem] bg-[#14463a] p-5 text-white shadow-lg" aria-label="Pırıl'ın yorumu" style={{ ['--d' as string]: '0.05s' }}>
+    <section className="rise rounded-[1.75rem] bg-[#1b1b1b] p-5 text-white shadow-lg" aria-label="Pırıl'ın yorumu" style={{ ['--d' as string]: '0.05s' }}>
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
         <button type="button" onClick={() => setTip(t => t + 1)} disabled={advice.lines.length < 2}
           aria-label="Pırıl'a dokun, başka bir ipucu göster" title="Dokun, başka bir ipucu söylesin"

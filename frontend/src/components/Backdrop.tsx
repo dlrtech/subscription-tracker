@@ -24,10 +24,10 @@ export default function Backdrop() {
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <div className="blob -left-32 -top-32 size-[30rem] bg-violet" />
       <div className="blob -right-32 top-1/3 size-[28rem] bg-mint" />
-      <div className="blob -bottom-40 left-1/4 size-[30rem] bg-pink" />
-      <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgb(22 38 61 / 0.12) 1.2px, transparent 1.4px)', backgroundSize: '24px 24px' }} />
+      <div className="blob -bottom-40 left-1/4 size-[30rem] bg-sky" />
+      <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgb(27 27 27 / 0.1) 1.2px, transparent 1.4px)', backgroundSize: '24px 24px' }} />
       {scatter.map((s, i) => (
-        <span key={i} style={{ transform: `rotate(${s.rot}deg)` }} className={`absolute ${s.pos} ${s.hideOnSmall ? 'hidden md:block' : ''} text-ink/[0.09]`}>
+        <span key={i} style={{ transform: `rotate(${s.rot}deg)` }} className={`absolute ${s.pos} ${s.hideOnSmall ? 'hidden md:block' : ''} text-ink/[0.07]`}>
           <Icon name={s.icon} className={s.size} />
         </span>
       ))}

@@ -10,7 +10,7 @@ interface Props {
   className?: string
 }
 
-const INK = '#16263d'
+const INK = '#1b1b1b'
 const BEAK = '#ff9d1c'
 const BODY: Record<MascotColor, string> = { yellow: '#ffd93b', sky: '#8cc8ff', mint: '#8fe3c0' }
 

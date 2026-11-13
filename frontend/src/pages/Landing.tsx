@@ -34,7 +34,7 @@ const reactions: { mood: Mood; color: MascotColor; t: string; say: string }[] = 
 ]
 
 const mockRows: { l: string; i: IconName; w: string; g: string }[] = [
-  { l: 'Eğlence', i: 'film', w: '70%', g: 'from-violet-deep to-sky' },
+  { l: 'Eğlence', i: 'film', w: '70%', g: 'from-violet-deep to-mint' },
   { l: 'Müzik', i: 'headphones', w: '45%', g: 'from-pink to-peach' },
   { l: 'Bulut', i: 'cloud', w: '20%', g: 'from-sky to-mint' },
 ]
@@ -166,14 +166,14 @@ export default function Landing() {
       </section>
 
       <section className="px-5 pb-20">
-        <div className="mx-auto max-w-4xl rounded-[2rem] bg-gradient-to-br from-violet via-sky to-mint p-10 text-center shadow-xl sm:p-14">
+        <div className="mx-auto max-w-4xl rounded-[2rem] bg-[#004228] p-10 text-center text-white shadow-xl sm:p-14">
           <div className="mb-4 flex items-end justify-center gap-2">
             <Mascot mood="happy" color="sky" className="size-20" />
             <Mascot mood="happy" waving className="size-24" />
             <Mascot mood="happy" color="mint" className="size-20" />
           </div>
           <h2 className="text-3xl font-black sm:text-5xl">Paranın nereye gittiğini öğrenmeye hazır mısın?</h2>
-          <Link to={cta.to} className="btn btn-dark mt-8 !px-8 !py-4 text-lg">{cta.label}<Icon name="arrowRight" className="size-5" /></Link>
+          <Link to={cta.to} className="btn btn-accent mt-8 !px-8 !py-4 text-lg">{cta.label}<Icon name="arrowRight" className="size-5" /></Link>
         </div>
       </section>
 
