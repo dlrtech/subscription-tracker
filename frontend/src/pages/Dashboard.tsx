@@ -5,13 +5,33 @@ import {
   type Category, type SpendingSummary, type Subscription, type TotalSpending,
 } from '../api'
 import { useAuth } from '../auth'
+import { adviceFor } from '../advice'
+import Advisor from '../components/Advisor'
 import Icon from '../components/Icon'
+import Mascot from '../components/Mascot'
 import ServiceIcon from '../components/ServiceIcon'
 import { iconFor } from '../icons'
+
+// The budget stays in this browser (nothing is sent to the server) and only applies to the currency it was set in.
+const BUDGET_KEY = 'st_budget'
+interface Budget { amount: number; currency: string }
+const readBudget = (): Budget | null => {
+  try {
+    const v = JSON.parse(localStorage.getItem(BUDGET_KEY) ?? 'null')
+    return v && typeof v.amount === 'number' && v.amount > 0 && typeof v.currency === 'string' ? v : null
+  } catch { return null }
+}
 
 export default function Dashboard() {
   const { user, setUser } = useAuth()
   const target = user?.preferredCurrency ?? 'TRY'
+  const [savedBudget, setSavedBudget] = useState<Budget | null>(readBudget)
+  const budget = savedBudget?.currency === target ? savedBudget.amount : null
+  const changeBudget = (amount: number | null) => {
+    const next = amount ? { amount, currency: target } : null
+    setSavedBudget(next)
+    try { if (next) localStorage.setItem(BUDGET_KEY, JSON.stringify(next)); else localStorage.removeItem(BUDGET_KEY) } catch { /* storage unavailable */ }
+  }
   const [summary, setSummary] = useState<SpendingSummary[] | null>(null)
   const [upcoming, setUpcoming] = useState<Subscription[]>([])
   const [total, setTotal] = useState<TotalSpending | null>(null)
@@ -57,7 +77,7 @@ export default function Dashboard() {
   if (summary.length === 0 && upcoming.length === 0) {
     return (
       <div className="card pop p-10 text-center">
-        <div aria-hidden="true" className="floaty mx-auto grid size-20 place-items-center rounded-3xl bg-violet text-ink"><Icon name="wallet" className="size-10" /></div>
+        <Mascot mood="happy" waving color="violet" className="mx-auto size-32" />
         <h2 className="mt-3 text-xl font-extrabold">Henüz hiç abonelik yok</h2>
         <p className="mt-1 muted">İlk aboneliğini ekle, her ay ne kadar harcadığını gör.</p>
         <Link to="/app/abonelikler" className="btn btn-primary mt-5">İlk aboneliği ekle</Link>
@@ -103,6 +123,8 @@ export default function Dashboard() {
           </>
         )}
       </section>
+
+      {!totalFailed && <Advisor advice={adviceFor({ total, activeCount, upcoming, budget })} currency={target} budget={budget} onBudgetChange={changeBudget} />}
 
       {cats.length > 0 && total && (
         <section className="card rise p-5" style={{ ['--d' as string]: '0.1s' }}>

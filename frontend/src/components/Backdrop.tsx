@@ -1,5 +1,6 @@
 import { floatingIcons } from '../icons'
 import Icon from './Icon'
+import Mascot from './Mascot'
 
 // Positions are fixed (not random) so the layout is stable between renders.
 const spots = [
@@ -16,6 +17,17 @@ export default function Backdrop() {
       <div className="blob -right-28 top-1/4 size-[26rem] bg-pink [animation-delay:-7s]" />
       <div className="blob -bottom-32 left-1/4 size-[30rem] bg-sky [animation-delay:-13s]" />
       <div className="blob bottom-10 right-10 size-72 bg-mint [animation-delay:-4s]" />
+      {/* Two little characters stroll along the bottom of the screen (large screens, and only with motion allowed). */}
+      {([
+        { color: 'mint', dur: '60s', delay: '-8s' },
+        { color: 'pink', dur: '85s', delay: '-52s' },
+      ] as const).map(w => (
+        <div key={w.color} className="walker hidden md:block motion-reduce:hidden" style={{ animationDuration: w.dur, animationDelay: w.delay }}>
+          <span className="floaty block" style={{ ['--dur' as string]: '0.7s', ['--amp' as string]: '6px', ['--r' as string]: '3deg' }}>
+            <Mascot mood="happy" color={w.color} className="size-14 opacity-80" />
+          </span>
+        </div>
+      ))}
       {floatingIcons.map((ic, i) => (
         <span
           key={i}

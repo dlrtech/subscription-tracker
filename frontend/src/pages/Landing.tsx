@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../auth'
 import Icon, { type IconName } from '../components/Icon'
 import Logo from '../components/Logo'
+import Mascot, { type MascotColor, type Mood } from '../components/Mascot'
 
 const chips: { t: string; i: IconName; c: string; pos: string; r: string; dur: string }[] = [
   { t: 'Netflix', i: 'film', c: 'bg-pink', pos: 'left-[-2%] top-[6%]', r: '-6deg', dur: '6s' },
@@ -23,6 +24,13 @@ const features: { i: IconName; t: string; d: string; c: string }[] = [
   { i: 'globe', t: 'Her para birimi', d: 'TRY, USD, EUR… yabancı abonelikler de burada; istersen hepsini tek para biriminde toplayıp gör.', c: 'bg-sky' },
   { i: 'lock', t: 'Verin sende', d: 'Şifren şifreli saklanır, hesabını istediğin an silebilirsin.', c: 'bg-mint' },
   { i: 'smartphone', t: 'Telefonda rahat', d: 'Otobüste de, derste de. Cebinde kullanmak için tasarlandı.', c: 'bg-peach' },
+]
+
+const reactions: { mood: Mood; color: MascotColor; t: string; say: string }[] = [
+  { mood: 'happy', color: 'mint', t: 'Bütçenin altındasın', say: 'Harika! Bütçenin sadece %40\'ını kullanıyorsun.' },
+  { mood: 'surprised', color: 'sky', t: 'Bir kategori her şeyi yiyor', say: 'Paranın %70\'i tek bir kategoriye gidiyor!' },
+  { mood: 'worried', color: 'peach', t: 'Limite yaklaştın', say: 'Bütçenin %93\'üne geldin. İki kez düşün.' },
+  { mood: 'shocked', color: 'pink', t: 'Bütçeyi aştın', say: 'Vay! Bütçeni 350 ₺ aştın. Neyi iptal edersin?' },
 ]
 
 const mockRows: { l: string; i: IconName; w: string; g: string }[] = [
@@ -118,6 +126,21 @@ export default function Landing() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 pb-20">
+        <h2 className="text-3xl font-black sm:text-4xl">Pırıl harcamana <span className="gradient-text">tepki verir</span></h2>
+        <p className="mt-3 max-w-2xl text-lg muted">Küçük arkadaşın Pırıl, giderlerine göz kulak olur: sevinir, şaşırır, endişelenir ve sana ne yapman gerektiğini söyler.</p>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {reactions.map((r, i) => (
+            <div key={r.mood} className="card card-hover group flex flex-col items-center p-5 text-center rise" style={{ ['--d' as string]: `${i * 0.08}s` }}>
+              <Mascot mood={r.mood} color={r.color} waving={r.mood === 'happy'}
+                className="size-28 transition-transform group-hover:[animation:hop_0.6s_ease]" />
+              <h3 className="mt-3 font-extrabold">{r.t}</h3>
+              <p className="bubble mt-3 text-sm font-semibold">{r.say}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-5 pb-20">
         <h2 className="text-3xl font-black sm:text-4xl">Neden <span className="gradient-text">subtracker?</span></h2>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {features.map(f => (
@@ -144,6 +167,11 @@ export default function Landing() {
 
       <section className="px-5 pb-20">
         <div className="mx-auto max-w-4xl rounded-[2rem] bg-gradient-to-br from-violet via-pink to-peach p-10 text-center shadow-xl sm:p-14">
+          <div className="mb-4 flex items-end justify-center gap-2">
+            <Mascot mood="happy" color="mint" waving className="floaty size-20 [--dur:4s]" />
+            <Mascot mood="happy" color="lemon" className="floaty size-24 [--dur:5s] [--delay:-1s]" />
+            <Mascot mood="happy" color="sky" waving className="floaty size-20 [--dur:4.5s] [--delay:-2s]" />
+          </div>
           <h2 className="text-3xl font-black sm:text-5xl">Paranın nereye gittiğini öğrenmeye hazır mısın?</h2>
           <Link to={cta.to} className="btn btn-dark mt-8 !px-8 !py-4 text-lg">{cta.label}<Icon name="arrowRight" className="size-5" /></Link>
         </div>

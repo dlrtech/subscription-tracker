@@ -61,6 +61,45 @@ body {
   to { transform: scaleX(1); }
 }
 
+/* ---------- Mascot ---------- */
+@keyframes blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.08); }
+}
+@keyframes wave {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-24deg); }
+  75% { transform: rotate(14deg); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  20% { transform: translateX(-4px) rotate(-3deg); }
+  40% { transform: translateX(4px) rotate(3deg); }
+  60% { transform: translateX(-3px) rotate(-2deg); }
+  80% { transform: translateX(3px) rotate(2deg); }
+}
+@keyframes hop {
+  0% { transform: translateY(0) scale(1, 1); }
+  25% { transform: translateY(0) scale(1.12, 0.86); }
+  55% { transform: translateY(-26px) scale(0.92, 1.1); }
+  80% { transform: translateY(0) scale(1.1, 0.9); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+@keyframes walk {
+  from { transform: translateX(-12vw); }
+  to { transform: translateX(112vw); }
+}
+@keyframes bubble-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+.mascot-eyes { transform-box: fill-box; transform-origin: center; animation: blink 5s ease-in-out infinite; }
+.mascot-arm-wave { transform-box: fill-box; transform-origin: 20% 90%; animation: wave 1.4s ease-in-out infinite; }
+.mascot-shake { animation: shake 0.7s ease-in-out infinite; }
+.mascot-hop { animation: hop 0.6s cubic-bezier(0.3, 0.7, 0.4, 1); }
+.walker { position: absolute; bottom: 0.5rem; left: 0; animation: walk 55s linear infinite; }
+.bubble-in { animation: bubble-in 0.3s ease-out both; }
+
 .blob { position: absolute; border-radius: 9999px; filter: blur(60px); opacity: 0.55; animation: drift 22s ease-in-out infinite; }
 .floaty { animation: floaty var(--dur, 6s) ease-in-out var(--delay, 0s) infinite; }
 .rise { animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0s) both; }
@@ -117,6 +156,19 @@ body {
 
   /* 0.74 of the ink color on white is about 6:1, above the 4.5:1 minimum for body text. */
   .muted { color: rgb(45 42 74 / 0.74); }
+  .bubble {
+    position: relative; border: 1.5px solid var(--color-line); border-radius: 1.25rem; background: #fff;
+    padding: 0.8rem 1rem; box-shadow: 0 8px 24px -14px rgb(111 77 240 / 0.45);
+  }
+  /* Little tail pointing at the character on its left (sm and up) or above it (small screens). */
+  .bubble::before {
+    content: ""; position: absolute; width: 0.9rem; height: 0.9rem; background: #fff;
+    border-left: 1.5px solid var(--color-line); border-top: 1.5px solid var(--color-line);
+    top: -0.5rem; left: 2.2rem; transform: rotate(45deg);
+  }
+  @media (min-width: 640px) {
+    .bubble::before { top: 1.6rem; left: -0.5rem; transform: rotate(-45deg); }
+  }
   .icon-btn {
     display: inline-grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 9999px;
     transition: transform 0.2s ease, background-color 0.2s ease;

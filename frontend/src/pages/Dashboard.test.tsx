@@ -28,6 +28,7 @@ const view = () => render(<MemoryRouter><Dashboard /></MemoryRouter>)
 
 beforeEach(() => {
   vi.resetAllMocks()
+  localStorage.clear()
   authState.user = makeUser('TRY')
   vi.mocked(api.upcoming).mockResolvedValue([])
   vi.mocked(api.total).mockResolvedValue(total())
@@ -53,8 +54,41 @@ describe('Dashboard', () => {
     view()
 
     await waitFor(() => expect(api.total).toHaveBeenCalledWith('USD'))
-    expect(await screen.findByText(/77,00/)).toBeInTheDocument()
+    // the big total, and again inside the mascot's sentence
+    expect((await screen.findAllByText(/77,00/)).length).toBeGreaterThanOrEqual(1)
     expect(screen.getByLabelText('Toplam para birimi')).toHaveValue('USD')
+  })
+
+  describe('mascot advice', () => {
+    it('reacts shocked once the saved budget is exceeded, and calms down when it is removed', async () => {
+      vi.mocked(api.summary).mockResolvedValue([summary('TRY', 500)])
+      view()
+      expect(await screen.findByText(/Gayet makul/)).toBeInTheDocument()
+
+      await userEvent.type(screen.getByLabelText(/Aylık bütçen/), '300')
+      await userEvent.click(screen.getByRole('button', { name: 'Kaydet' }))
+      expect(await screen.findByText(/Vay! Aylık bütçeni .* aştın/)).toBeInTheDocument()
+      expect(JSON.parse(localStorage.getItem('st_budget')!)).toEqual({ amount: 300, currency: 'TRY' })
+
+      await userEvent.click(screen.getByRole('button', { name: 'Kaldır' }))
+      expect(await screen.findByText(/Gayet makul/)).toBeInTheDocument()
+      expect(localStorage.getItem('st_budget')).toBeNull()
+    })
+
+    it('ignores a budget that was saved in another currency', async () => {
+      localStorage.setItem('st_budget', JSON.stringify({ amount: 100, currency: 'USD' }))
+      vi.mocked(api.summary).mockResolvedValue([summary('TRY', 500)])
+      view()
+      expect(await screen.findByText(/Gayet makul/)).toBeInTheDocument()
+    })
+
+    it('shows the next tip when the character is tapped', async () => {
+      vi.mocked(api.summary).mockResolvedValue([summary('TRY', 500)])
+      view()
+      await screen.findByText(/Gayet makul/)
+      await userEvent.click(screen.getByRole('button', { name: /Pırıl'a dokun/ }))
+      expect(await screen.findByText(/bütçe belirle/)).toBeInTheDocument()
+    })
   })
 
   it('converts even when every subscription uses one currency different from the preference', async () => {
