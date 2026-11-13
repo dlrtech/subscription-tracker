@@ -42,16 +42,17 @@ Tablolar ilk açılışta Flyway tarafından otomatik oluşturulur (`src/main/re
 
 | Değişken | Açıklama | Varsayılan |
 |---|---|---|
-| `DB_URL` | JDBC bağlantı adresi | `jdbc:postgresql://localhost:5432/subscription_tracker` |
+| `DB_URL` | JDBC bağlantı adresi. Neon gibi bulut veritabanlarında `jdbc:postgresql://HOST/DB?sslmode=require` | `jdbc:postgresql://localhost:5432/subscription_tracker` |
 | `DB_USERNAME` / `DB_PASSWORD` | Veritabanı kullanıcısı | `postgres` / — |
+| `DB_POOL_SIZE` | Veritabanı bağlantı havuzu boyutu (küçük örnekler ve ücretsiz bulut veritabanları için 5 yeterli) | `5` |
 | `JWT_SECRET` | Token imzalama anahtarı, **en az 32 karakter, zorunlu** | — |
 | `JWT_EXPIRATION` | Access token geçerlilik süresi (ISO-8601) | `PT15M` |
 | `REFRESH_EXPIRATION` | Refresh token (oturum) süresi | `P30D` |
 | `CORS_ALLOWED_ORIGINS` | Frontend adresleri (virgülle ayrılmış) | `http://localhost:3000,http://localhost:5173` |
 | `FRONTEND_URL` | E-postalardaki bağlantıların adresi | `http://localhost:5173` |
 | `COOKIE_SECURE` / `COOKIE_SAMESITE` | Refresh cookie ayarı, aşağıya bakın | `true` / `None` |
-| `SPRING_MAIL_HOST`, `SPRING_MAIL_PORT`, `SPRING_MAIL_USERNAME`, `SPRING_MAIL_PASSWORD` | SMTP sunucusu. Host boşsa e-postalar gönderilmez, **log'a yazılır** | — / `587` |
-| `MAIL_FROM` | Gönderen adresi | `subtracker <no-reply@localhost>` |
+| `SPRING_MAIL_HOST`, `SPRING_MAIL_PORT`, `SPRING_MAIL_USERNAME`, `SPRING_MAIL_PASSWORD` | SMTP sunucusu. Host boşsa e-postalar gönderilmez, **log'a yazılır**. Render ücretsiz planı 25/465/587 portlarını engeller, **2525** kullan | — / `587` |
+| `MAIL_FROM` | Gönderen adresi; SMTP sağlayıcıda doğrulanmış olmalı | `subtracker <no-reply@localhost>` |
 | `RATE_LIMIT_MAX_REQUESTS` / `RATE_LIMIT_WINDOW` | Giriş, kayıt, şifre sıfırlama uçlarında istemci başına istek sınırı | `10` / `PT1M` |
 | `DEFAULT_CURRENCY` | Para birimi verilmeyen aboneliklerde kullanılır | `TRY` |
 | `EXCHANGE_URL` | Kur servisi (varsayılan: ücretsiz Frankfurter / ECB, anahtar gerekmez) | `https://api.frankfurter.dev/v1/latest` |
@@ -130,7 +131,7 @@ Geçmiş bir `nextBillingDate` girilirse bir sonraki ödeme günü hesaplanır. 
 
 ### E-postalar ve hatırlatmalar
 
-Doğrulama, şifre sıfırlama ve ödeme hatırlatma e-postaları SMTP ile gönderilir (`SPRING_MAIL_*`). SMTP ayarlı değilse e-posta içeriği (bağlantılar dahil) uygulama log'una yazılır; yerel geliştirmede bağlantıyı oradan kopyalayabilirsiniz. Üretimde mutlaka SMTP tanımlayın.
+Doğrulama, şifre sıfırlama ve ödeme hatırlatma e-postaları SMTP ile gönderilir (`SPRING_MAIL_*`). SMTP ayarlı değilse e-posta içeriği (bağlantılar dahil) uygulama log'una yazılır; yerel geliştirmede bağlantıyı oradan kopyalayabilirsiniz. Üretimde mutlaka SMTP tanımlayın. Ücretsiz posta adresleri (`@gmail.com` gibi) gönderen olarak kullanılırsa e-postalar çoğunlukla spam'e düşer; güvenilir teslimat için kendi alan adınızı SMTP sağlayıcıda doğrulayın.
 
 Her sabah 09:00'da (sunucu saat dilimi), e-postasını doğrulamış ve hatırlatmaları açık olan kullanıcılara, seçtikleri gün sayısı içindeki ödemeler için **tek bir e-posta** gönderilir. Aynı ödeme için ikinci kez hatırlatma yapılmaz; gönderim başarısız olursa ertesi gün yeniden denenir. Kur bilgisi için `api.frankfurter.dev` adresine yalnızca para birimi kodu gönderilir, kullanıcı verisi gönderilmez; kurlar 6 saat önbelleğe alınır.
 
@@ -165,4 +166,8 @@ Testler bellek içi H2 veritabanıyla çalışır; PostgreSQL gerekmez. Aynı te
 
 ## Sağlık kontrolü
 
-`GET /actuator/health` → `{"status":"UP"}` (kimlik doğrulama gerektirmez).
+`GET /actuator/health` → `{"status":"UP"}` (kimlik doğrulama gerektirmez). Ücretsiz bir bulut planında uygulamanın uyumaması için bir izleme servisinin bu adresi düzenli yoklaması yeterlidir.
+
+## Bellek
+
+`Dockerfile`, 512 MB'lık küçük örneklere sığması için JVM'i `-Xmx256m`, seri çöp toplayıcı ve sınırlı metaspace ile başlatır. Daha büyük bir sunucuda bu bayrakları artırabilirsiniz.
