@@ -66,18 +66,6 @@ export default function Privacy() {
           <p>Reklam, analiz ya da takip çerezi kullanmıyoruz.</p>
         </Section>
 
-        <Section title="Verilerini kimler işliyor?">
-          <p>Uygulamayı çalıştırmak için şu hizmetleri kullanıyoruz:</p>
-          <ul>
-            <li><b>Render:</b> sitenin ve sunucunun barındırılması.</li>
-            <li><b>Neon:</b> verilerinin saklandığı veritabanı (Frankfurt, Avrupa).</li>
-            <li><b>Brevo:</b> doğrulama, şifre sıfırlama ve hatırlatma e-postalarının gönderilmesi. E-posta adresin ve e-postanın içeriği bu hizmetten geçer.</li>
-            <li><b>Frankfurter (Avrupa Merkez Bankası kurları):</b> güncel döviz kurları için kullanılır. Bu hizmete senin kişisel bilgin gönderilmez.</li>
-            <li><b>Google Fonts:</b> sitedeki yazı tipini yüklemek için kullanılır. Sayfayı açtığında tarayıcın Google'a istek gönderir ve IP adresin bu istekle Google tarafından görülebilir.</li>
-          </ul>
-          <p>Bu hizmetlerin kendi gizlilik politikaları vardır. Bunlar dışında verilerini kimseyle paylaşmıyoruz.</p>
-        </Section>
-
         <Section title="Verileri ne kadar süre saklıyoruz?">
           <ul>
             <li>Hesap ve abonelik verilerin, hesabını silene kadar saklanır.</li>

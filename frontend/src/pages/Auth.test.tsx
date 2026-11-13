@@ -168,7 +168,7 @@ describe('routing', () => {
     render(<MemoryRouter initialEntries={['/gizlilik']}><AuthProvider><App /></AuthProvider></MemoryRouter>)
     expect(screen.getByRole('heading', { name: 'Gizlilik Metni' })).toBeInTheDocument()
     expect(screen.getByText(/Hesabı sil/)).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Verilerini kimler işliyor?' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Verileri ne kadar süre saklıyoruz?' })).toBeInTheDocument()
   })
 
   it('links the privacy page from the sign-up form but not from the login form', () => {
