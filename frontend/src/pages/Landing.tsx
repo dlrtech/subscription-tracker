@@ -27,16 +27,16 @@ const features: { i: IconName; t: string; d: string; c: string }[] = [
 ]
 
 const reactions: { mood: Mood; color: MascotColor; t: string; say: string }[] = [
-  { mood: 'happy', color: 'mint', t: 'Bütçenin altındasın', say: 'Harika! Bütçenin sadece %40\'ını kullanıyorsun.' },
-  { mood: 'surprised', color: 'sky', t: 'Bir kategori her şeyi yiyor', say: 'Paranın %70\'i tek bir kategoriye gidiyor!' },
-  { mood: 'worried', color: 'peach', t: 'Limite yaklaştın', say: 'Bütçenin %93\'üne geldin. İki kez düşün.' },
-  { mood: 'shocked', color: 'pink', t: 'Bütçeyi aştın', say: 'Vay! Bütçeni 350 ₺ aştın. Neyi iptal edersin?' },
+  { mood: 'happy', color: 'yellow', t: 'Bütçenin altındasın', say: 'Harika! Bütçenin sadece %40\'ını kullanıyorsun.' },
+  { mood: 'surprised', color: 'yellow', t: 'Bir kategori her şeyi yiyor', say: 'Paranın %70\'i tek bir kategoriye gidiyor!' },
+  { mood: 'worried', color: 'yellow', t: 'Limite yaklaştın', say: 'Bütçenin %93\'üne geldin. İki kez düşün.' },
+  { mood: 'shocked', color: 'yellow', t: 'Bütçeyi aştın', say: 'Vay! Bütçeni 350 ₺ aştın. Neyi iptal edersin?' },
 ]
 
 const mockRows: { l: string; i: IconName; w: string; g: string }[] = [
-  { l: 'Eğlence', i: 'film', w: '70%', g: 'from-violet to-pink' },
+  { l: 'Eğlence', i: 'film', w: '70%', g: 'from-violet-deep to-sky' },
   { l: 'Müzik', i: 'headphones', w: '45%', g: 'from-pink to-peach' },
-  { l: 'Bulut', i: 'cloud', w: '20%', g: 'from-sky to-violet' },
+  { l: 'Bulut', i: 'cloud', w: '20%', g: 'from-sky to-mint' },
 ]
 
 const faqs = [
@@ -166,11 +166,11 @@ export default function Landing() {
       </section>
 
       <section className="px-5 pb-20">
-        <div className="mx-auto max-w-4xl rounded-[2rem] bg-gradient-to-br from-violet via-pink to-peach p-10 text-center shadow-xl sm:p-14">
+        <div className="mx-auto max-w-4xl rounded-[2rem] bg-gradient-to-br from-violet via-sky to-mint p-10 text-center shadow-xl sm:p-14">
           <div className="mb-4 flex items-end justify-center gap-2">
-            <Mascot mood="happy" color="mint" className="size-20" />
-            <Mascot mood="happy" color="lemon" waving className="size-24" />
             <Mascot mood="happy" color="sky" className="size-20" />
+            <Mascot mood="happy" waving className="size-24" />
+            <Mascot mood="happy" color="mint" className="size-20" />
           </div>
           <h2 className="text-3xl font-black sm:text-5xl">Paranın nereye gittiğini öğrenmeye hazır mısın?</h2>
           <Link to={cta.to} className="btn btn-dark mt-8 !px-8 !py-4 text-lg">{cta.label}<Icon name="arrowRight" className="size-5" /></Link>

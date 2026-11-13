@@ -1,21 +1,25 @@
 @import "tailwindcss";
 
-/* Pastel light theme. "-deep" shades are for text/borders on light backgrounds (readable contrast). */
+/*
+ * Calm, gender-neutral palette: navy ink, blue accent, teal/green and warm yellow highlights.
+ * The token names "violet" and "pink" are historical; they now hold soft blue and soft amber, and the
+ * "-deep" shades are for text/borders on light backgrounds (readable contrast). "pink-deep" is the error red.
+ */
 @theme {
   --font-sans: "Nunito", "SF Pro Rounded", ui-rounded, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --color-paper: #eeecf6;
+  --color-paper: #eaf1f8;
   --color-panel: #ffffff;
-  --color-line: #d9d2ee;
-  --color-ink: #2d2a4a;
-  --color-violet: #c3b3ff;
-  --color-violet-deep: #6f4df0;
-  --color-pink: #ffb7d5;
-  --color-pink-deep: #c2306e;
-  --color-mint: #a9efd3;
-  --color-mint-deep: #17835a;
-  --color-sky: #aadcff;
-  --color-peach: #ffd4ab;
-  --color-lemon: #fff2a8;
+  --color-line: #cfdbe8;
+  --color-ink: #16263d;
+  --color-violet: #bcd3ff;
+  --color-violet-deep: #1f55c9;
+  --color-pink: #ffd37a;
+  --color-pink-deep: #c2362b;
+  --color-mint: #a7e6cd;
+  --color-mint-deep: #14795a;
+  --color-sky: #a6d8f7;
+  --color-peach: #ffcfa0;
+  --color-lemon: #ffe985;
 }
 
 html { scroll-behavior: smooth; }
@@ -106,8 +110,7 @@ body {
 .bar-grow { transform-origin: left; animation: bar 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0s) both; }
 
 .gradient-text {
-  background: linear-gradient(90deg, #7c5cff, #e0558f, #ff9a5c, #7c5cff);
-  background-size: 200% auto;
+  background: linear-gradient(90deg, #1f55c9, #0b7f86);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -120,10 +123,10 @@ body {
     background: #fff;
     border: 1.5px solid var(--color-line);
     border-radius: 1.75rem;
-    box-shadow: 0 6px 20px -10px rgb(45 42 74 / 0.22);
+    box-shadow: 0 6px 20px -10px rgb(22 38 61 / 0.22);
   }
   .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-  .card-hover:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -12px rgb(45 42 74 / 0.3); }
+  .card-hover:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -12px rgb(22 38 61 / 0.3); }
 
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
@@ -134,10 +137,11 @@ body {
   .btn:active:not(:disabled) { transform: scale(0.97); }
   .btn:disabled { opacity: 0.6; cursor: not-allowed; }
   .btn-primary {
-    background: linear-gradient(135deg, var(--color-violet), var(--color-pink));
-    color: var(--color-ink);
-    box-shadow: 0 8px 22px -8px rgb(214 64 127 / 0.55);
+    background: var(--color-violet-deep);
+    color: #fff;
+    box-shadow: 0 8px 20px -8px rgb(31 85 201 / 0.6);
   }
+  .btn-accent { background: #ffd93b; color: var(--color-ink); box-shadow: 0 6px 16px -8px rgb(0 0 0 / 0.5); }
   .btn-dark { background: var(--color-ink); color: #fff; }
   .btn-ghost { background: rgb(255 255 255 / 0.7); border: 1px solid var(--color-line); color: var(--color-ink); }
   .btn-ghost:hover:not(:disabled) { border-color: var(--color-violet-deep); }
@@ -149,14 +153,14 @@ body {
     background: rgb(255 255 255 / 0.9); padding: 0.75rem 1rem; color: var(--color-ink); outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
-  .input::placeholder { color: rgb(45 42 74 / 0.68); }
-  .input:focus { border-color: var(--color-violet-deep); box-shadow: 0 0 0 4px rgb(195 179 255 / 0.4); }
+  .input::placeholder { color: rgb(22 38 61 / 0.68); }
+  .input:focus { border-color: var(--color-violet-deep); box-shadow: 0 0 0 4px rgb(31 85 201 / 0.25); }
 
   /* 0.74 of the ink color on white is about 6:1, above the 4.5:1 minimum for body text. */
-  .muted { color: rgb(45 42 74 / 0.74); }
+  .muted { color: rgb(22 38 61 / 0.74); }
   .bubble {
     position: relative; border: 1.5px solid var(--color-line); border-radius: 1.25rem; background: #fff;
-    padding: 0.8rem 1rem; box-shadow: 0 8px 24px -14px rgb(111 77 240 / 0.45);
+    padding: 0.8rem 1rem; box-shadow: 0 8px 24px -14px rgb(31 85 201 / 0.4);
   }
   /* Little tail pointing at the character on its left (sm and up) or above it (small screens). */
   .bubble::before {
@@ -172,7 +176,7 @@ body {
     transition: transform 0.2s ease, background-color 0.2s ease;
   }
   .icon-btn:hover { transform: scale(1.1); }
-  .notice-error { background: rgb(255 183 213 / 0.35); color: #a3205a; border-radius: 1rem; padding: 0.6rem 0.9rem; }
+  .notice-error { background: rgb(255 190 180 / 0.45); color: #9b2318; border-radius: 1rem; padding: 0.6rem 0.9rem; }
   .notice-ok { background: rgb(169 239 211 / 0.45); color: #0f6b47; border-radius: 1rem; padding: 0.6rem 0.9rem; }
 }
 

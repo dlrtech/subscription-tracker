@@ -24,14 +24,14 @@ export default function Advisor({ advice, currency, budget, onBudgetChange }: Pr
   const clear = () => { setDraft(''); onBudgetChange(null); setTip(0) }
 
   return (
-    <section className="rise rounded-[1.75rem] bg-[#2f2a6b] p-5 text-white shadow-lg" aria-label="Pırıl'ın yorumu" style={{ ['--d' as string]: '0.05s' }}>
+    <section className="rise rounded-[1.75rem] bg-[#14284b] p-5 text-white shadow-lg" aria-label="Pırıl'ın yorumu" style={{ ['--d' as string]: '0.05s' }}>
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
         <button type="button" onClick={() => setTip(t => t + 1)} disabled={advice.lines.length < 2}
           aria-label="Pırıl'a dokun, başka bir ipucu göster" title="Dokun, başka bir ipucu söylesin"
           className="shrink-0 rounded-full outline-offset-4 disabled:cursor-default">
           {/* key restarts the hop animation on every tap and every mood change */}
           <span key={`${advice.mood}-${tip}`} className="mascot-hop block">
-            <Mascot mood={advice.mood} color="violet" waving={advice.mood === 'happy'} className="size-28" />
+            <Mascot mood={advice.mood} waving={advice.mood === 'happy'} className="size-28" />
           </span>
         </button>
         <div className="min-w-0 flex-1 space-y-3">
@@ -45,7 +45,7 @@ export default function Advisor({ advice, currency, budget, onBudgetChange }: Pr
               <input className="input mt-1 !py-2 text-sm text-ink" type="number" inputMode="decimal" min="1" step="any"
                 placeholder="Örn. 1500" value={draft} onChange={e => setDraft(e.target.value)} />
             </label>
-            <button className="btn btn-primary !py-2 text-sm">Kaydet</button>
+            <button className="btn btn-accent !py-2 text-sm">Kaydet</button>
             {budget !== null && <button type="button" onClick={clear} className="btn btn-ghost !py-2 text-sm">Kaldır</button>}
           </form>
         </div>
