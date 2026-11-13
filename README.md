@@ -2,6 +2,11 @@
 
 Dijital aboneliklerini (Netflix, Spotify, iCloud…) tek yerde takip et: aylık ve yıllık harcamanı gör, yaklaşan ödemeler için e-posta hatırlatması al.
 
+**Canlı demo:** [subscription-tracker-1-zlb3.onrender.com](https://subscription-tracker-1-zlb3.onrender.com)
+(Ücretsiz barındırma kullanıldığı için sunucu bir süre kullanılmazsa uyur; ilk kayıt veya giriş 1–2 dakika sürebilir.)
+
+![subtracker açılış sayfası](docs/screenshots/landing.png)
+
 | Klasör | İçerik |
 |---|---|
 | [`backend/`](backend/README.md) | Spring Boot 4 REST API (PostgreSQL, JWT + refresh cookie, Flyway) |
