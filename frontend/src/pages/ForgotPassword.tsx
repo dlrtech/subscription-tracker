@@ -20,7 +20,7 @@ export default function ForgotPassword() {
   return (
     <AuthShell>
       <form onSubmit={submit} className={cardClass}>
-        <h1 className="text-2xl font-extrabold">Şifreni mi unuttun? 🔑</h1>
+        <h1 className="text-2xl font-extrabold">Şifreni mi unuttun?</h1>
         {sent ? (
           <p role="status" className="notice-ok text-sm">
             Bu adres kayıtlıysa şifre sıfırlama bağlantısını gönderdik. Gelen kutunu (ve spam klasörünü) kontrol et. Bağlantı 1 saat geçerli.

@@ -58,12 +58,12 @@ export interface ListQuery {
 export interface ListResult { items: Subscription[]; total: number }
 
 export const categoryLabels: Record<Category, string> = {
-  ENTERTAINMENT: '🎬 Eğlence',
-  MUSIC: '🎧 Müzik',
-  SOFTWARE: '💻 Yazılım',
-  INTERNET: '🌐 İnternet',
-  CLOUD: '☁️ Bulut',
-  OTHER: '✨ Diğer',
+  ENTERTAINMENT: 'Eğlence',
+  MUSIC: 'Müzik',
+  SOFTWARE: 'Yazılım',
+  INTERNET: 'İnternet',
+  CLOUD: 'Bulut',
+  OTHER: 'Diğer',
 }
 export const periodLabels: Record<BillingPeriod, string> = {
   WEEKLY: 'Haftalık',

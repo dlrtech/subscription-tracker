@@ -10,7 +10,7 @@
   --color-violet: #c3b3ff;
   --color-violet-deep: #6f4df0;
   --color-pink: #ffb7d5;
-  --color-pink-deep: #d6407f;
+  --color-pink-deep: #c2306e;
   --color-mint: #a9efd3;
   --color-mint-deep: #17835a;
   --color-sky: #aadcff;
@@ -90,7 +90,7 @@ body {
 
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-    border-radius: 9999px; padding: 0.7rem 1.4rem; font-weight: 800;
+    min-height: 2.75rem; border-radius: 9999px; padding: 0.7rem 1.4rem; font-weight: 800;
     transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
   }
   .btn:hover:not(:disabled) { transform: translateY(-2px) scale(1.03); }
@@ -112,15 +112,24 @@ body {
     background: rgb(255 255 255 / 0.9); padding: 0.75rem 1rem; color: var(--color-ink); outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
-  .input::placeholder { color: rgb(45 42 74 / 0.45); }
+  .input::placeholder { color: rgb(45 42 74 / 0.68); }
   .input:focus { border-color: var(--color-violet-deep); box-shadow: 0 0 0 4px rgb(195 179 255 / 0.4); }
 
-  .muted { color: rgb(45 42 74 / 0.62); }
+  /* 0.74 of the ink color on white is about 6:1, above the 4.5:1 minimum for body text. */
+  .muted { color: rgb(45 42 74 / 0.74); }
+  .icon-btn {
+    display: inline-grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 9999px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+  .icon-btn:hover { transform: scale(1.1); }
   .notice-error { background: rgb(255 183 213 / 0.35); color: #a3205a; border-radius: 1rem; padding: 0.6rem 0.9rem; }
   .notice-ok { background: rgb(169 239 211 / 0.45); color: #0f6b47; border-radius: 1rem; padding: 0.6rem 0.9rem; }
 }
 
 :focus-visible { outline: 3px solid var(--color-violet-deep); outline-offset: 2px; }
+
+/* Tailwind's reset makes buttons use the default arrow; clickable things should look clickable. */
+button:not(:disabled), a[href], summary, select, [role="button"], label:has(input[type="checkbox"]) { cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

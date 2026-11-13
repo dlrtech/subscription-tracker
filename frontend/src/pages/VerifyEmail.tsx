@@ -32,7 +32,7 @@ export default function VerifyEmail() {
         {state === 'working' && <p className="muted">Doğrulanıyor…</p>}
         {state === 'ok' && (
           <>
-            <p role="status" className="notice-ok text-sm">E-postan doğrulandı ✅ Artık ödeme hatırlatmalarını alabilirsin.</p>
+            <p role="status" className="notice-ok text-sm">E-postan doğrulandı. Artık ödeme hatırlatmalarını alabilirsin.</p>
             <Link to={user ? '/app' : '/giris'} className="btn btn-primary w-full">
               {user ? 'Uygulamaya git' : 'Giriş yap'}
             </Link>

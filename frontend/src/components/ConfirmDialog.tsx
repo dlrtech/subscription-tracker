@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import Icon from './Icon'
 
 interface Props {
   title: string
@@ -25,7 +26,7 @@ export default function ConfirmDialog({ title, message, confirmLabel, busy, onCo
       <div role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-msg"
         onClick={e => e.stopPropagation()}
         className="card pop w-full max-w-sm space-y-3 p-6">
-        <div aria-hidden="true" className="grid size-12 place-items-center rounded-2xl bg-pink text-2xl">🗑️</div>
+        <div aria-hidden="true" className="grid size-12 place-items-center rounded-2xl bg-pink text-ink"><Icon name="trash" className="size-6" /></div>
         <h2 id="confirm-title" className="text-lg font-extrabold">{title}</h2>
         <p id="confirm-msg" className="text-sm muted">{message}</p>
         <div className="flex gap-3 pt-2">

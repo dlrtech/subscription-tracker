@@ -4,6 +4,7 @@ import {
   type BillingPeriod, type Category, type ListQuery, type Subscription, type SubscriptionInput,
 } from '../api'
 import ConfirmDialog from '../components/ConfirmDialog'
+import Icon from '../components/Icon'
 import ServiceIcon from '../components/ServiceIcon'
 
 const field = 'input'
@@ -114,7 +115,7 @@ export default function Subscriptions() {
       {error && <p role="alert" className="notice-error">{error}</p>}
       {!items ? <p className="muted">Yükleniyor…</p> : items.length === 0 ? (
         <p className="card p-8 text-center muted">
-          {filtered ? 'Aramana uyan abonelik yok.' : 'Liste boş. İlk aboneliğini ekle 👆'}
+          {filtered ? 'Aramana uyan abonelik yok.' : 'Liste boş. İlk aboneliğini yukarıdaki "Ekle" düğmesiyle ekle.'}
         </p>
       ) : (
         <>
@@ -131,11 +132,11 @@ export default function Subscriptions() {
                 <div className="flex shrink-0 items-center gap-3">
                   <p className={`font-extrabold ${s.active ? '' : 'opacity-50'}`}>{money(s.price, s.currency)}</p>
                   <button aria-label={s.active ? `${s.name} aboneliğini durdur` : `${s.name} aboneliğini sürdür`}
-                    title={s.active ? 'Durdur' : 'Sürdür'} onClick={() => toggleActive(s)} className="rounded-full p-1 transition hover:scale-125 hover:bg-violet/30">
-                    {s.active ? '⏸️' : '▶️'}
+                    title={s.active ? 'Durdur' : 'Sürdür'} onClick={() => toggleActive(s)} className="icon-btn hover:bg-violet/30">
+                    <Icon name={s.active ? 'pause' : 'play'} className="size-5" />
                   </button>
-                  <button aria-label={`${s.name} aboneliğini düzenle`} onClick={() => setEditing({ id: s.id, data: toInput(s) })} className="rounded-full p-1 transition hover:scale-125 hover:bg-violet/30">✏️</button>
-                  <button aria-label={`${s.name} aboneliğini sil`} onClick={() => setDeleting(s)} className="rounded-full p-1 transition hover:scale-125 hover:bg-pink/40">🗑️</button>
+                  <button aria-label={`${s.name} aboneliğini düzenle`} title="Düzenle" onClick={() => setEditing({ id: s.id, data: toInput(s) })} className="icon-btn hover:bg-violet/30"><Icon name="pencil" className="size-5" /></button>
+                  <button aria-label={`${s.name} aboneliğini sil`} title="Sil" onClick={() => setDeleting(s)} className="icon-btn text-pink-deep hover:bg-pink/40"><Icon name="trash" className="size-5" /></button>
                 </div>
               </li>
             ))}

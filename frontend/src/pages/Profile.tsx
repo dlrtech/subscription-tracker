@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { useAuth } from '../auth'
 import ConfirmDialog from '../components/ConfirmDialog'
+import Icon from '../components/Icon'
 
 const field = 'input'
 
@@ -23,14 +24,14 @@ export default function Profile() {
     catch (e) { setMsg({ ok: false, text: (e as Error).message }) }
   }
 
-  const saveName = (e: FormEvent) => { e.preventDefault(); run(async () => setUser(await api.updateProfile({ name })), 'Adın güncellendi ✅') }
+  const saveName = (e: FormEvent) => { e.preventDefault(); run(async () => setUser(await api.updateProfile({ name })), 'Adın güncellendi.') }
   const saveReminders = (e: FormEvent) => {
     e.preventDefault()
-    run(async () => setUser(await api.updateProfile({ remindersEnabled: remind, reminderDays: days })), 'Hatırlatma ayarların kaydedildi ✅')
+    run(async () => setUser(await api.updateProfile({ remindersEnabled: remind, reminderDays: days })), 'Hatırlatma ayarların kaydedildi.')
   }
   const savePw = (e: FormEvent) => {
     e.preventDefault()
-    run(async () => { await api.changePassword(cur, next); setCur(''); setNext('') }, 'Şifren değişti, diğer cihazlardaki oturumların kapatıldı ✅')
+    run(async () => { await api.changePassword(cur, next); setCur(''); setNext('') }, 'Şifren değişti, diğer cihazlardaki oturumların kapatıldı.')
   }
   const resend = () => run(() => api.resendVerification(), 'Doğrulama e-postası gönderildi. Gelen kutunu kontrol et.')
   const del = async () => {
@@ -46,8 +47,8 @@ export default function Profile() {
       <p className="text-sm muted">
         {user?.email}{' '}
         {user?.emailVerified
-          ? <span className="font-bold text-mint-deep">✓ doğrulandı</span>
-          : <button onClick={resend} className="ml-1 font-bold text-violet-deep underline">Doğrulama e-postasını tekrar gönder</button>}
+          ? <span className="inline-flex items-center gap-1 font-bold text-mint-deep"><Icon name="check" className="size-4" />doğrulandı</span>
+          : <button onClick={resend} className="ml-1 inline-flex min-h-11 items-center font-bold text-violet-deep underline">Doğrulama e-postasını tekrar gönder</button>}
       </p>
       {msg && <p role="status" className={`text-sm ${msg.ok ? 'notice-ok' : 'notice-error'}`}>{msg.text}</p>}
 
@@ -58,7 +59,7 @@ export default function Profile() {
       </form>
 
       <form onSubmit={saveReminders} className="card rise space-y-3 p-5">
-        <h2 className="font-extrabold">⏰ Ödeme hatırlatmaları</h2>
+        <h2 className="flex items-center gap-2 font-extrabold"><Icon name="bell" className="size-5" />Ödeme hatırlatmaları</h2>
         <label className="flex items-center gap-2 text-sm font-semibold">
           <input type="checkbox" checked={remind} onChange={e => setRemind(e.target.checked)} className="size-4 accent-violet-deep" />
           Yaklaşan ödemeler için e-posta gönder

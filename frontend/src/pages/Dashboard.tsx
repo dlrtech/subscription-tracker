@@ -5,6 +5,7 @@ import {
   type Category, type SpendingSummary, type Subscription, type TotalSpending,
 } from '../api'
 import { useAuth } from '../auth'
+import Icon from '../components/Icon'
 import ServiceIcon from '../components/ServiceIcon'
 import { iconFor } from '../icons'
 
@@ -56,7 +57,7 @@ export default function Dashboard() {
   if (summary.length === 0 && upcoming.length === 0) {
     return (
       <div className="card pop p-10 text-center">
-        <div className="floaty text-6xl">🫥</div>
+        <div aria-hidden="true" className="floaty mx-auto grid size-20 place-items-center rounded-3xl bg-violet text-ink"><Icon name="wallet" className="size-10" /></div>
         <h2 className="mt-3 text-xl font-extrabold">Henüz hiç abonelik yok</h2>
         <p className="mt-1 muted">İlk aboneliğini ekle, her ay ne kadar harcadığını gör.</p>
         <Link to="/app/abonelikler" className="btn btn-primary mt-5">İlk aboneliği ekle</Link>
@@ -111,8 +112,8 @@ export default function Dashboard() {
               <li key={c}>
                 <div className="mb-1 flex items-center justify-between text-sm font-bold">
                   <span className="flex items-center gap-2">
-                    <span aria-hidden="true" className={`${iconFor('', c).bg} grid size-7 place-items-center rounded-lg text-base`}>{iconFor('', c).emoji}</span>
-                    {categoryLabels[c].replace(/^\S+\s/, '')}
+                    <span aria-hidden="true" className={`${iconFor('', c).bg} grid size-8 place-items-center rounded-lg text-ink`}><Icon name={iconFor('', c).icon} className="size-4" /></span>
+                    {categoryLabels[c]}
                   </span>
                   <span className="muted">{money(v, total.currency)}</span>
                 </div>
@@ -127,7 +128,7 @@ export default function Dashboard() {
       )}
 
       <details className="card rise group p-5" open={totalFailed} style={{ ['--d' as string]: '0.15s' }}>
-        <summary className="cursor-pointer list-none font-extrabold">💱 Girdiğin para birimleriyle <span className="text-sm font-semibold muted">(çevrilmemiş)</span></summary>
+        <summary className="cursor-pointer list-none flex items-center gap-2 font-extrabold"><Icon name="globe" className="size-5" />Girdiğin para birimleriyle <span className="text-sm font-semibold muted">(çevrilmemiş)</span></summary>
         <div className="mt-4 space-y-3">
           {summary.map(s => (
             <div key={s.currency} className="grid grid-cols-3 gap-3 rounded-2xl bg-violet/15 p-3 text-sm">
@@ -140,9 +141,9 @@ export default function Dashboard() {
       </details>
 
       <section className="rise" style={{ ['--d' as string]: '0.2s' }}>
-        <h3 className="mb-3 text-lg font-extrabold">⏰ Yaklaşan ödemeler <span className="text-sm font-semibold muted">(14 gün)</span></h3>
+        <h3 className="mb-3 flex items-center gap-2 text-lg font-extrabold"><Icon name="bell" className="size-5" />Yaklaşan ödemeler <span className="text-sm font-semibold muted">(14 gün)</span></h3>
         {upcoming.length === 0 ? (
-          <p className="card p-4 muted">Önümüzdeki 14 günde ödeme yok. Rahat nefes 😮‍💨</p>
+          <p className="card p-4 muted">Önümüzdeki 14 günde ödeme yok. Rahat nefes alabilirsin.</p>
         ) : (
           <ul className="space-y-2">
             {upcoming.map((u, i) => (

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { api, ApiError } from '../api'
 import { useAuth } from '../auth'
 import AuthShell, { cardClass, inputClass as input } from '../components/AuthShell'
+import Icon from '../components/Icon'
 
 export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
   const isRegister = mode === 'register'
@@ -19,9 +20,9 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
 
   // A sleeping free-tier server needs up to a minute or two to wake up: say so instead of leaving a silent spinner.
   useEffect(() => {
-    if (!busy) { setSlow(false); return }
+    if (!busy) return
     const t = setTimeout(() => setSlow(true), 4000)
-    return () => clearTimeout(t)
+    return () => { clearTimeout(t); setSlow(false) }
   }, [busy])
 
   const submit = async (e: FormEvent) => {
@@ -44,7 +45,7 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
   return (
     <AuthShell>
       <form onSubmit={submit} className={cardClass}>
-        <h1 className="text-2xl font-extrabold">{isRegister ? 'Hadi başlayalım 🚀' : 'Tekrar hoş geldin 👋'}</h1>
+        <h1 className="text-2xl font-extrabold">{isRegister ? 'Hadi başlayalım' : 'Tekrar hoş geldin'}</h1>
         <p className="text-sm muted">{isRegister ? 'Dakikalar içinde abonelik kaosunu bitir.' : 'Aboneliklerin seni bekliyor.'}</p>
 
         {isRegister && (
@@ -67,8 +68,8 @@ export default function AuthPage({ mode }: { mode: 'login' | 'register' }) {
 
         {error && <p role="alert" className="notice-error text-sm">{error}</p>}
         {slow && (
-          <p role="status" className="notice-ok text-sm">
-            ☕ Sunucu uyanıyor, ilk istek 1-2 dakika sürebilir. Sayfayı kapatma, işlem kendiliğinden tamamlanacak.
+          <p role="status" className="notice-ok flex items-start gap-2 text-sm">
+            <Icon name="coffee" className="mt-0.5 size-4" />Sunucu uyanıyor, ilk istek 1-2 dakika sürebilir. Sayfayı kapatma, işlem kendiliğinden tamamlanacak.
           </p>
         )}
 

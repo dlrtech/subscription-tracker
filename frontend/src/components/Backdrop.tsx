@@ -1,4 +1,5 @@
 import { floatingIcons } from '../icons'
+import Icon from './Icon'
 
 // Positions are fixed (not random) so the layout is stable between renders.
 const spots = [
@@ -24,9 +25,9 @@ export default function Backdrop() {
             ['--delay' as string]: `${-(i * 0.9)}s`,
             ['--amp' as string]: `${10 + (i % 3) * 6}px`,
           }}
-          className={`floaty absolute ${spots[i]} ${ic.bg} grid size-12 place-items-center rounded-2xl text-2xl opacity-70 shadow-md ${i > 5 ? 'hidden md:grid' : ''}`}
+          className={`floaty absolute ${spots[i]} ${ic.bg} grid size-12 place-items-center rounded-2xl text-ink opacity-70 shadow-md ${i > 5 ? 'hidden md:grid' : ''}`}
         >
-          {ic.emoji}
+          <Icon name={ic.icon} className="size-6" />
         </span>
       ))}
     </div>

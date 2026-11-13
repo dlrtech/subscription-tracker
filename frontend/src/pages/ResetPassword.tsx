@@ -27,7 +27,7 @@ export default function ResetPassword() {
   return (
     <AuthShell>
       <form onSubmit={submit} className={cardClass}>
-        <h1 className="text-2xl font-extrabold">Yeni şifre belirle 🔐</h1>
+        <h1 className="text-2xl font-extrabold">Yeni şifre belirle</h1>
         {!token ? (
           <p role="alert" className="notice-error text-sm">
             Bağlantı eksik. E-postandaki bağlantıya tekrar tıkla ya da <Link className="underline" to="/sifremi-unuttum">yeni bir bağlantı iste</Link>.
