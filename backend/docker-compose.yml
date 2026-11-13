@@ -27,6 +27,7 @@ services:
       DEFAULT_CURRENCY: ${DEFAULT_CURRENCY:-TRY}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
       # Plain http on localhost: the refresh cookie cannot be Secure/SameSite=None there.
+      API_DOCS_ENABLED: ${API_DOCS_ENABLED:-false}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
       COOKIE_SAMESITE: ${COOKIE_SAMESITE:-Lax}
       SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-}

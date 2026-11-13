@@ -183,8 +183,10 @@ class SubscriptionApiTest extends ApiTestSupport {
     }
 
     @Test
-    void healthAndApiDocsArePublic() throws Exception {
+    void healthIsPublicButApiDocsAreNotExposedByDefault() throws Exception {
         mockMvc.perform(get("/actuator/health")).andExpect(status().isOk());
-        mockMvc.perform(get("/v3/api-docs")).andExpect(status().isOk());
+        // The documentation lists every endpoint, so it must stay off unless API_DOCS_ENABLED is set.
+        mockMvc.perform(get("/v3/api-docs")).andExpect(status().isNotFound());
+        mockMvc.perform(get("/swagger-ui/index.html")).andExpect(status().isNotFound());
     }
 }

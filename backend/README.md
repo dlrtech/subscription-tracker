@@ -54,6 +54,7 @@ Tablolar ilk açılışta Flyway tarafından otomatik oluşturulur (`src/main/re
 | `SPRING_MAIL_HOST`, `SPRING_MAIL_PORT`, `SPRING_MAIL_USERNAME`, `SPRING_MAIL_PASSWORD` | SMTP sunucusu. Host boşsa e-postalar gönderilmez, **log'a yazılır**. Render ücretsiz planı 25/465/587 portlarını engeller, **2525** kullan | — / `587` |
 | `MAIL_FROM` | Gönderen adresi; SMTP sağlayıcıda doğrulanmış olmalı | `subtracker <no-reply@localhost>` |
 | `RATE_LIMIT_MAX_REQUESTS` / `RATE_LIMIT_WINDOW` | Giriş, kayıt, şifre sıfırlama uçlarında istemci başına istek sınırı | `10` / `PT1M` |
+| `API_DOCS_ENABLED` | Swagger arayüzü ve `/v3/api-docs`. Üretimde kapalı kalmalı | `false` |
 | `DEFAULT_CURRENCY` | Para birimi verilmeyen aboneliklerde kullanılır | `TRY` |
 | `EXCHANGE_URL` | Kur servisi (varsayılan: ücretsiz Frankfurter / ECB, anahtar gerekmez) | `https://api.frankfurter.dev/v1/latest` |
 
@@ -61,7 +62,7 @@ Güvenli bir anahtar üretmek için: `openssl rand -base64 48`
 
 ## API
 
-Etkileşimli dokümantasyon: `http://localhost:8080/swagger-ui.html` (OpenAPI JSON: `/v3/api-docs`).
+Etkileşimli dokümantasyon: `http://localhost:8080/swagger-ui.html` (OpenAPI JSON: `/v3/api-docs`). Tüm uç noktaları herkese gösterdiği için **varsayılan olarak kapalıdır**; yerelde `API_DOCS_ENABLED=true` (ya da `application-local.properties.example` dosyasındaki `springdoc.*` ayarları) ile açın, üretimde açmayın.
 
 `/api/auth/**` dışındaki tüm uç noktalar `Authorization: Bearer <token>` başlığı ister.
 
